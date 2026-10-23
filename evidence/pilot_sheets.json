@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "catalog": "https://tnmaccess.nationalmap.gov/api/v1/products",
+  "retrieved_on": "2026-10-23",
+  "source_credit": "U.S. Geological Survey Historical Topographic Map Collection",
+  "review_scope": "Targeted visual inspection only; no complete symbol inventory or second review",
+  "sheets": [
+    {
+      "name": "Macksburg",
+      "county": "Washington",
+      "year": 1961,
+      "scale": 24000,
+      "source_id": "5a8a257be4b00f54eb3c0935",
+      "source_url": "https://prd-tnm.s3.amazonaws.com/StagedProducts/Maps/HistoricalTopo/PDF/OH/24000/OH_Macksburg_225684_1961_24000_geo.pdf",
+      "local_file": "OH_Macksburg_225684_1961_24000_geo.pdf",
+      "sha256": "a6b3e6081cada5f5bd74caea5131d2c4eabfaf8bc0a96ee0326a0a745bb7ddcf",
+      "observation_type": "collar_note",
+      "observation": "The collar explicitly says unlabeled wells are oil wells. Individual symbol count remains unreviewed.",
+      "full_count_complete": false
+    },
+    {
+      "name": "Lowell",
+      "county": "Washington",
+      "year": 1961,
+      "scale": 24000,
+      "source_id": "5a8a2576e4b00f54eb3c08b7",
+      "source_url": "https://prd-tnm.s3.amazonaws.com/StagedProducts/Maps/HistoricalTopo/PDF/OH/24000/OH_Lowell_225661_1961_24000_geo.pdf",
+      "local_file": "OH_Lowell_225661_1961_24000_geo.pdf",
+      "sha256": "cf63403086f3bc859a74212c3be7ac8a0da5f601841cbd79cda67b95279edb21",
+      "observation_type": "labeled_example",
+      "observation": "An interior map label Oil Well appears beside an open circle near the eastern edge.",
+      "full_count_complete": false
+    },
+    {
+      "name": "Findlay",
+      "county": "Hancock",
+      "year": 1960,
+      "scale": 24000,
+      "source_id": "5a8a2476e4b00f54eb3bf1b5",
+      "source_url": "https://prd-tnm.s3.amazonaws.com/StagedProducts/Maps/HistoricalTopo/PDF/OH/24000/OH_Findlay_225047_1960_24000_geo.pdf",
+      "local_file": "OH_Findlay_225047_1960_24000_geo.pdf",
+      "sha256": "f1f535ffc0700755e15ad92388c94f9b2d091a4608102be974968d0bd74d4cf1",
+      "observation_type": "labeled_example",
+      "observation": "An interior map label Oil Well appears beside an open circle near the airport.",
+      "full_count_complete": false
+    },
+    {
+      "name": "North Baltimore",
+      "county": "Wood",
+      "year": 1960,
+      "scale": 24000,
+      "source_id": "5a8a2621e4b00f54eb3c192c",
+      "source_url": "https://prd-tnm.s3.amazonaws.com/StagedProducts/Maps/HistoricalTopo/PDF/OH/24000/OH_North%20Baltimore_227602_1960_24000_geo.pdf",
+      "local_file": "OH_North_Baltimore_227602_1960_24000_geo.pdf",
+      "sha256": "cc195da47a0cedc9d79fb4c000860e25c993c8bda9200e533133f8fd6630b454",
+      "observation_type": "labeled_example",
+      "observation": "The interior prints Oil Well and Oil Wells labels beside open circles.",
+      "full_count_complete": false
+    },
+    {
+      "name": "Medina",
+      "county": "Medina",
+      "year": 1953,
+      "scale": 24000,
+      "source_id": "5a8a25afe4b00f54eb3c0e9d",
+      "source_url": "https://prd-tnm.s3.amazonaws.com/StagedProducts/Maps/HistoricalTopo/PDF/OH/24000/OH_Medina_227841_1953_24000_geo.pdf",
+      "local_file": "OH_Medina_227841_1953_24000_geo.pdf",
+      "sha256": "20cdbe7c409154c170866461d98c6684818d08e6224a8caf51c6d3b11294a46a",
+      "observation_type": "labeled_example",
+      "observation": "An interior Oil Wells label appears beside open circles.",
+      "full_count_complete": false
+    },
+    {
+      "name": "Lodi",
+      "county": "Medina",
+      "year": 1961,
+      "scale": 24000,
+      "source_id": "5a8a2561e4b00f54eb3c0722",
+      "source_url": "https://prd-tnm.s3.amazonaws.com/StagedProducts/Maps/HistoricalTopo/PDF/OH/24000/OH_Lodi_225616_1961_24000_geo.pdf",
+      "local_file": "OH_Lodi_225616_1961_24000_geo.pdf",
+      "sha256": "2b15c7108af3d27b0c73729d5b4ccf290941606b750022251c24d7819c9feca8",
+      "observation_type": "labeled_example",
+      "observation": "An interior Gas Well label appears beside an open circle; other Gas Well labels also appear.",
+      "full_count_complete": false
+    }
+  ]
+}

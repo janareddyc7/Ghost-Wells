@@ -25,3 +25,4 @@ jobs:
           python-version: '3.11'
       - run: python -m unittest discover -s tests
       - run: python -m ghostwells survey --input examples/sheets.csv --output reports/survey.json
+      - run: python -m ghostwells survey --input evidence/survey_inventory.csv --output reports/pilot-survey.json

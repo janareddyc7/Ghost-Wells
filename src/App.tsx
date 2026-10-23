@@ -22,60 +22,22 @@ import {
   SlidersHorizontal,
   X,
 } from 'lucide-react'
+import pilot from '../evidence/pilot_sheets.json'
 
 type View = 'overview' | 'survey' | 'pipeline' | 'about'
-type SheetStatus = 'Queued' | 'Needs review' | 'Reviewed'
+type SheetStatus = 'Example seen' | 'Collar note'
 
-const sheets: {
-  name: string
-  county: string
-  edition: string
-  status: SheetStatus
-  symbols: string
-}[] = [
-  {
-    name: 'Macksburg',
-    county: 'Washington',
-    edition: 'Historical edition',
-    status: 'Queued',
-    symbols: '—',
-  },
-  {
-    name: 'Lowell',
-    county: 'Washington',
-    edition: 'Historical edition',
-    status: 'Queued',
-    symbols: '—',
-  },
-  {
-    name: 'Findlay',
-    county: 'Hancock',
-    edition: 'Historical edition',
-    status: 'Queued',
-    symbols: '—',
-  },
-  {
-    name: 'North Baltimore',
-    county: 'Wood',
-    edition: 'Historical edition',
-    status: 'Queued',
-    symbols: '—',
-  },
-  {
-    name: 'Medina',
-    county: 'Medina',
-    edition: 'Historical edition',
-    status: 'Queued',
-    symbols: '—',
-  },
-  {
-    name: 'Lodi',
-    county: 'Medina',
-    edition: 'Historical edition',
-    status: 'Queued',
-    symbols: '—',
-  },
-]
+const sheets = pilot.sheets.map((sheet) => ({
+  name: sheet.name,
+  county: sheet.county,
+  edition: `${sheet.year} · 1:${sheet.scale.toLocaleString()}`,
+  status: (sheet.observation_type === 'labeled_example'
+    ? 'Example seen'
+    : 'Collar note') as SheetStatus,
+  observation: sheet.observation,
+  url: `https://www.sciencebase.gov/catalog/item/${sheet.source_id}`,
+}))
+const exampleCount = sheets.filter((sheet) => sheet.status === 'Example seen').length
 
 const stages = [
   {
@@ -325,9 +287,9 @@ function App() {
                 <div>
                   <strong>Research status: source survey underway</strong>
                   <p>
-                    Ohio map symbols have not yet been confirmed in this repository. The
-                    map graphic is illustrative; no real candidate locations are
-                    displayed.
+                    Labeled well symbols appear on five sampled Ohio sheets. Full-sheet
+                    counts and independent review are still pending. The map graphic is
+                    illustrative; no candidate locations are displayed.
                   </p>
                 </div>
                 <ArrowUpRight size={18} />
@@ -351,17 +313,21 @@ function App() {
                       <ArrowUpRight size={16} />
                     </div>
                     <div className="metric-value">06</div>
-                    <div className="metric-label">Pilot sheets queued</div>
-                    <div className="metric-note">Across three Ohio regions</div>
+                    <div className="metric-label">Pilot sheets acquired</div>
+                    <div className="metric-note">
+                      Exact USGS sources and hashes recorded
+                    </div>
                   </div>
                   <div className="metric-card">
                     <div className="metric-top">
                       <ScanSearch size={20} />
                       <ArrowUpRight size={16} />
                     </div>
-                    <div className="metric-value">—</div>
-                    <div className="metric-label">Symbols confirmed</div>
-                    <div className="metric-note">Awaiting reviewed scans</div>
+                    <div className="metric-value">{exampleCount}</div>
+                    <div className="metric-label">Sheets with labeled examples</div>
+                    <div className="metric-note">
+                      Targeted inspection, not full counts
+                    </div>
                   </div>
                   <div className="metric-card">
                     <div className="metric-top">
@@ -432,22 +398,22 @@ function App() {
                   Ohio sheet survey<span className="heading-period">.</span>
                 </h1>
                 <p>
-                  A working inventory of pilot quadrangles to inspect. A queued sheet is a
-                  research target, not proof that its maps contain well symbols.
+                  Six downloaded USGS editions with traceable source IDs and hashes.
+                  Targeted visual checks found labeled examples on five sheets.
                 </p>
               </div>
               <div className="notice-line">
                 <FileSearch size={18} />
                 <span>
-                  <strong>0 of 6 reviewed.</strong> Counts stay blank until source scans
-                  and symbol crops are checked.
+                  <strong>0 of 6 fully counted.</strong> Example sightings establish that
+                  the symbols exist; complete counts and second review remain open.
                 </span>
               </div>
               <div className="table-panel">
                 <div className="table-toolbar">
                   <div>
                     <h2>Sheet inventory</h2>
-                    <p>Initial survey targets from the project brief</p>
+                    <p>USGS historical editions · inspected 23 October 2026</p>
                   </div>
                   <div className="toolbar-actions">
                     <label className="search-box">
@@ -467,9 +433,8 @@ function App() {
                         onChange={(event) => setStatusFilter(event.target.value)}
                       >
                         <option>All statuses</option>
-                        <option>Queued</option>
-                        <option>Needs review</option>
-                        <option>Reviewed</option>
+                        <option>Example seen</option>
+                        <option>Collar note</option>
                       </select>
                       <ChevronDown size={15} />
                     </label>
@@ -483,7 +448,7 @@ function App() {
                         <th>COUNTY</th>
                         <th>EDITION</th>
                         <th>STATUS</th>
-                        <th>SYMBOLS</th>
+                        <th>COUNT</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -493,14 +458,25 @@ function App() {
                             <span className="sheet-icon">
                               <Layers3 size={17} />
                             </span>
-                            <strong>{sheet.name}</strong>
+                            <a
+                              href={sheet.url}
+                              target="_blank"
+                              rel="noreferrer"
+                              title={sheet.observation}
+                            >
+                              <strong>{sheet.name}</strong>
+                            </a>
                           </td>
                           <td>{sheet.county}</td>
                           <td>{sheet.edition}</td>
                           <td>
-                            <Tag>{sheet.status}</Tag>
+                            <Tag
+                              tone={sheet.status === 'Example seen' ? 'green' : 'amber'}
+                            >
+                              {sheet.status}
+                            </Tag>
                           </td>
-                          <td className="mono">{sheet.symbols}</td>
+                          <td className="mono">Pending</td>
                         </tr>
                       ))}
                     </tbody>

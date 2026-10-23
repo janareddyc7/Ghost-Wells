@@ -1,0 +1,7 @@
+sheet_id,quadrangle,county,edition_year,source_url,review_status,well_symbols,lookalikes,reviewer,notes
+5a8a257be4b00f54eb3c0935,Macksburg,Washington,1961,https://prd-tnm.s3.amazonaws.com/StagedProducts/Maps/HistoricalTopo/PDF/OH/24000/OH_Macksburg_225684_1961_24000_geo.pdf,pending,,,,Collar note found; full count pending
+5a8a2576e4b00f54eb3c08b7,Lowell,Washington,1961,https://prd-tnm.s3.amazonaws.com/StagedProducts/Maps/HistoricalTopo/PDF/OH/24000/OH_Lowell_225661_1961_24000_geo.pdf,pending,,,,Labeled example found; full count pending
+5a8a2476e4b00f54eb3bf1b5,Findlay,Hancock,1960,https://prd-tnm.s3.amazonaws.com/StagedProducts/Maps/HistoricalTopo/PDF/OH/24000/OH_Findlay_225047_1960_24000_geo.pdf,pending,,,,Labeled example found; full count pending
+5a8a2621e4b00f54eb3c192c,North Baltimore,Wood,1960,https://prd-tnm.s3.amazonaws.com/StagedProducts/Maps/HistoricalTopo/PDF/OH/24000/OH_North%20Baltimore_227602_1960_24000_geo.pdf,pending,,,,Labeled example found; full count pending
+5a8a25afe4b00f54eb3c0e9d,Medina,Medina,1953,https://prd-tnm.s3.amazonaws.com/StagedProducts/Maps/HistoricalTopo/PDF/OH/24000/OH_Medina_227841_1953_24000_geo.pdf,pending,,,,Labeled example found; full count pending
+5a8a2561e4b00f54eb3c0722,Lodi,Medina,1961,https://prd-tnm.s3.amazonaws.com/StagedProducts/Maps/HistoricalTopo/PDF/OH/24000/OH_Lodi_225616_1961_24000_geo.pdf,pending,,,,Labeled example found; full count pending

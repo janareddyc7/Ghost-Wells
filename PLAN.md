@@ -6,7 +6,7 @@ Updated: 2026-10-23. Owner: project team. Status key: `TODO`, `IN PROGRESS`, `DO
 
 Build a reproducible workflow that reads historical Ohio map evidence, compares it with ODNR records, and produces private, reviewable leads. A polished interface is useful only when its underlying evidence is traceable. Never call a candidate a confirmed well.
 
-**Current gate:** Determine whether specific Ohio historical topo editions print enough individual well symbols for this approach. The source brief does not yet identify a confirmed Ohio sheet. Record a scan, edition, URL, and reviewed crop before claiming success.
+**Current gate:** Five named Ohio historical topo editions now show labeled individual well symbols in targeted inspection ([evidence log](EVIDENCE.md)). The remaining question is density, lookalikes, spatial coverage, and whether detection can generate useful reviewed leads. Complete and independently check the survey before claiming that the approach scales.
 
 ## Milestones
 
@@ -24,12 +24,16 @@ Build a reproducible workflow that reads historical Ohio map evidence, compares 
 
 ### 0. Evidence and feasibility
 
-- [ ] Download a small stratified sample of named Ohio editions: Macksburg/Lowell, Findlay/North Baltimore, Medina/Lodi, plus negative controls.
-- [ ] Save source URL, USGS identifier, edition year, scale, download date, rights, and file hash for every scan.
-- [ ] Inspect interior map areas and collars separately. Record actual symbol crops and confusing lookalikes.
+- [x] Download six named Ohio editions: Macksburg/Lowell, Findlay/North Baltimore, Medina/Lodi.
+- [ ] Add negative-control sheets from lower drilling regions.
+- [x] Save source URL, USGS identifier, catalog year, scale, download date, rights, and file hash for each pilot scan.
+- [x] Inspect selected interior areas and collars; document labeled positive examples on five sheets and a collar note on Macksburg.
+- [ ] Complete full-interior and collar inspection, count symbols and confusing lookalikes, and retain private review crops.
 - [ ] Have a second reviewer check a sample. Log disagreements.
-- [ ] Run `ghostwells survey` on the reviewed inventory and publish aggregate counts only.
-- [ ] Make a documented **continue / pivot / stop** decision. Continue if multiple Ohio sheets across more than one region have unambiguous individual symbols and enough density for a useful pilot. Pivot to another historical source if symbols are sparse. Stop map detection if neither source produces reliable, permitted evidence.
+- [x] Seed the real pilot inventory with all six editions marked pending; the survey command reports zero completed counts.
+- [ ] Run `ghostwells survey` on the fully reviewed inventory and publish aggregate counts only.
+- [x] Decide to **continue Stage 0**: labeled symbols exist on five sampled sheets across multiple regions. This is a narrow feasibility result, not a decision to launch the full detection product.
+- [ ] Make a documented **continue / pivot / stop** decision for model work after full counts and a second review. Continue if density and reproducibility justify a pilot. Pivot to another historical source if symbols are sparse. Stop map detection if neither source produces reliable, permitted evidence.
 
 ### 1. Data contracts and provenance
 
@@ -63,19 +67,21 @@ Build a reproducible workflow that reads historical Ohio map evidence, compares 
 - [x] Add a dependency free Stage 0 survey CLI with tests.
 - [x] Add CI checks for the frontend and survey utility.
 - [ ] Define a dependency update policy.
-- [ ] Add real data fixtures under a rights-aware storage policy; keep raw scans and precise locations outside Git.
+- [x] Add a source manifest and file-hash verification; keep raw scans and precise locations outside Git.
 - [ ] Test keyboard and mobile workflows with real users.
 - [ ] Threat model precise coordinate storage, exports, logs, and screenshots.
 - [ ] Verify every number, citation, and deadline in the demo against current primary sources.
+- [ ] Correct the source brief's statewide first-mapped date claim: the official catalog contains a Medina 1953 1:24,000 edition.
 - [ ] Prepare a 3 minute demo using real Ohio evidence only; label any simulated data.
 
 ## Decision log
 
-| Date       | Decision                          | Reason                                                               | Revisit                                                                            |
-| ---------- | --------------------------------- | -------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| 2026-10-23 | Start with files, not a database  | Survey and pilot are single team batch workflows; fewer moving parts | Add a database when concurrent review, access controls, or query volume require it |
-| 2026-10-23 | Show sample data explicitly in UI | No Ohio detection has been validated in this repository              | Replace with versioned, reviewed exports after M0–M3                               |
-| 2026-10-23 | Gate full build on Ohio symbols   | A core source assumption is unresolved                               | After reviewed M0 evidence                                                         |
+| Date       | Decision                          | Reason                                                                                       | Revisit                                                                            |
+| ---------- | --------------------------------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| 2026-10-23 | Start with files, not a database  | Survey and pilot are single team batch workflows; fewer moving parts                         | Add a database when concurrent review, access controls, or query volume require it |
+| 2026-10-23 | Show sample data explicitly in UI | No Ohio detection has been validated in this repository                                      | Replace with versioned, reviewed exports after M0–M3                               |
+| 2026-10-23 | Gate full build on Ohio symbols   | A core source assumption is unresolved                                                       | After reviewed M0 evidence                                                         |
+| 2026-10-23 | Continue the Stage 0 survey       | Five named Ohio sheets contain labeled well symbols; density and lead quality remain unknown | After full counts and independent review                                           |
 
 ## Run log template
 

@@ -4,7 +4,7 @@ Ghost Wells investigates whether historical Ohio topographic maps can reveal oil
 
 ## Current state
 
-This repository is an initial, runnable foundation. The public interface uses explicitly labeled sample data. No Ohio well detections, ODNR matches, model accuracy, or agency partnership have been validated here yet. The first research gate is the Ohio symbol survey in [PLAN.md](PLAN.md).
+This repository is an initial, runnable foundation. [Targeted visual inspection](EVIDENCE.md) of six official Ohio historical map editions found labeled well symbols on five sheets. Full-sheet symbol counts, automated Ohio detections, ODNR matches, model accuracy, and agency partnership have not been validated here. The active research gate is a systematic Ohio symbol survey in [PLAN.md](PLAN.md). The interface's map artwork is illustrative.
 
 ## Run the interface
 
@@ -22,17 +22,19 @@ Run `npm run check` before committing. The app opens at the local URL printed by
 Requires Python 3.10 or newer. The CLI accepts a manually reviewed CSV inventory of historical sheets. It reports symbol counts and coverage without making up detections.
 
 ```bash
-python -m ghostwells survey --input examples/sheets.csv --output reports/survey.json
+python -m ghostwells survey --input evidence/survey_inventory.csv --output reports/survey.json
+python -m ghostwells verify --manifest evidence/pilot_sheets.json --data-dir data/usgs
 python -m unittest discover -s tests
 ```
 
-The CSV schema is documented in `examples/sheets.csv`. `review_status=reviewed` is required before counts are considered evidence. Rows marked `pending` are excluded from confirmed symbol counts. Use local source IDs and edition metadata for provenance. Do not put precise candidate coordinates in public files.
+The CSV schema is documented in `examples/sheets.csv`. `review_status=reviewed` is required before counts are considered evidence. Rows marked `pending` are excluded from confirmed symbol counts. Download the six scans from the official URLs in `evidence/pilot_sheets.json` before running `verify`; raw files stay ignored by Git. Do not put precise candidate coordinates in public files.
 
 ## Structure
 
 - `src/`: accessible review dashboard and design system
 - `ghostwells/`: small, dependency free Stage 0 survey CLI
 - `examples/`: synthetic schema example, never field evidence
+- `evidence/`: official source metadata, hashes, and scoped observations
 - `tests/`: survey behavior tests
 - `PLAN.md`: milestones, evidence gates, decisions, and release checklist
 

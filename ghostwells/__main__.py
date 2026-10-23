@@ -9,6 +9,8 @@ from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
+from ghostwells.evidence import verify_files
+
 REQUIRED_COLUMNS = {
     "sheet_id", "quadrangle", "county", "edition_year", "source_url",
     "review_status", "well_symbols", "lookalikes", "reviewer", "notes",
@@ -82,6 +84,9 @@ def main() -> None:
     survey = subcommands.add_parser("survey", help="Summarize a reviewed sheet inventory")
     survey.add_argument("--input", type=Path, required=True)
     survey.add_argument("--output", type=Path, required=True)
+    verify = subcommands.add_parser("verify", help="Check downloaded USGS scans against a manifest")
+    verify.add_argument("--manifest", type=Path, required=True)
+    verify.add_argument("--data-dir", type=Path, required=True)
     args = parser.parse_args()
 
     if args.command == "survey":
@@ -92,6 +97,14 @@ def main() -> None:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
         print(f"Wrote survey report to {args.output}")
+    elif args.command == "verify":
+        try:
+            errors = verify_files(args.manifest, args.data_dir)
+        except (OSError, ValueError, KeyError, json.JSONDecodeError) as error:
+            parser.error(str(error))
+        if errors:
+            parser.exit(1, "\n".join(errors) + "\n")
+        print("All source scans match the evidence manifest")
 
 
 if __name__ == "__main__":
