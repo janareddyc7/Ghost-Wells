@@ -1,0 +1,2 @@
+sheet_id,quadrangle,county,edition_year,source_url,review_status,well_symbols,lookalikes,reviewer,notes
+SYNTHETIC-001,Example quadrangle,Example County,1960,,pending,,,,This is a schema example only; replace with real USGS metadata
