@@ -207,11 +207,17 @@ class TrainingEvaluationTests(unittest.TestCase):
         self.assertEqual(len(rows), 6)
         self.assertFalse(manifest["training_ready"])
         self.assertFalse(manifest["evaluation_ready"])
+        self.assertFalse(manifest["deployment_ready"])
 
-        manifest["evaluation_ready"] = True
-        self.write_json(manifest_path, manifest)
-        with self.assertRaisesRegex(ValueError, "keep evaluation/deployment gates closed"):
-            read_weak_fit_rows(dataset_dir)
+        for gate in ("evaluation_ready", "deployment_ready"):
+            manifest[gate] = True
+            self.write_json(manifest_path, manifest)
+            with self.subTest(gate=gate):
+                with self.assertRaisesRegex(
+                    ValueError, "keep evaluation/deployment gates closed"
+                ):
+                    read_weak_fit_rows(dataset_dir)
+            manifest[gate] = False
 
     def test_eval_scores_complete_held_out_sheet_with_one_to_one_matches(self) -> None:
         sources_path = self.root / "sources.json"

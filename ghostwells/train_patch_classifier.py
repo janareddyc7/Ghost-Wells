@@ -74,7 +74,10 @@ def read_weak_fit_rows(dataset_dir: Path) -> tuple[dict[str, Any], list[dict[str
     weak = manifest.get("weak_supervision", {})
     if weak.get("weak_supervision_fit_ready") is not True:
         raise ValueError("Dataset has no prepared weak-supervision fit table")
-    if manifest.get("evaluation_ready") is not False or manifest.get("deployment_ready") is True:
+    if (
+        manifest.get("evaluation_ready") is not False
+        or manifest.get("deployment_ready") is not False
+    ):
         raise ValueError("Weak-supervision data must keep evaluation/deployment gates closed")
     expected_hash = weak.get("table_sha256")
     if not isinstance(expected_hash, str) or file_sha256(examples_path) != expected_hash:

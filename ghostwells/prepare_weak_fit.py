@@ -211,6 +211,7 @@ def prepare_weak_fit(dataset_dir: Path) -> dict[str, Any]:
     manifest["status"] = "weak_label_exploratory_fit_ready"
     manifest["training_ready"] = False
     manifest["evaluation_ready"] = False
+    manifest["deployment_ready"] = False
     manifest.setdefault("output_hashes", {})[
         "weak_supervision_training_examples_csv_sha256"
     ] = weak_fit["table_sha256"]
