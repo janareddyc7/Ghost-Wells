@@ -124,6 +124,7 @@ class TrainingEvaluationTests(unittest.TestCase):
         for sample_id, status in [
             ("human-pos", "confirmed_symbol"),
             ("human-neg", "rejected_lookalike"),
+            ("human-edge", "rejected_collar_or_page_furniture"),
             ("ai-pos", "ai_screen_symbol_candidate"),
             ("ai-neg", "ai_screen_lookalike"),
             ("uncertain", "uncertain"),
@@ -197,12 +198,13 @@ class TrainingEvaluationTests(unittest.TestCase):
         )
 
         result = prepare_weak_fit(dataset_dir)
-        self.assertEqual(result["example_count"], 5)
+        self.assertEqual(result["example_count"], 6)
         self.assertEqual(result["class_counts"]["candidate_well_symbol"], 2)
-        self.assertEqual(result["class_counts"]["candidate_lookalike"], 3)
+        self.assertEqual(result["class_counts"]["candidate_lookalike"], 4)
         self.assertEqual(result["provenance_counts"]["ai_visual_screen_weak_label"], 2)
+        self.assertEqual(result["provenance_counts"]["human_out_of_frame_rejection"], 1)
         manifest, rows = read_weak_fit_rows(dataset_dir)
-        self.assertEqual(len(rows), 5)
+        self.assertEqual(len(rows), 6)
         self.assertFalse(manifest["training_ready"])
         self.assertFalse(manifest["evaluation_ready"])
 

@@ -96,14 +96,15 @@ Use that merged overlay as `--decisions` when rebuilding the private crop datase
 
 ### Fit-only classifier and held-out detector evaluation
 
-For an explicitly weak-label exploratory run using the available AI and single-reviewer tiers, prepare the weighted fit table and train with no validation metrics. AI labels are assigned 0.05 weight, clear earlier human candidate labels 1.0, and sparse human spatial negatives 0.25. Uncertain and out-of-frame examples remain excluded from fitting. This experiment is not human-review-ready, evaluation-ready, or deployment-ready:
+For an explicitly weak-label exploratory run using the available AI and single-reviewer tiers, prepare the weighted fit table and train a frozen-ImageNet visual-embedding ranker. AI labels are assigned 0.05 weight, clear earlier human candidate labels 1.0, out-of-frame human rejections 0.25, and sparse human spatial negatives 0.25. Uncertain examples remain excluded from fitting. The ranker's private scores are uncalibrated review priorities, not probabilities. This experiment is not human-review-ready, evaluation-ready, or deployment-ready:
 
 ```bash
-python -m ghostwells.prepare_weak_fit --dataset-dir data/usgs/dataset-training-prep-v5
-python -m ghostwells.train_patch_classifier --dataset-dir data/usgs/dataset-training-prep-v5 --output-dir data/usgs/training-runs/weak-fit-v1 --weak-supervision --epochs 20 --batch-size 32 --seed 42
+python -m ghostwells.build_dataset --manifest evidence/pilot_sheets.json --candidates data/usgs/review_candidates_300dpi.json --decisions data/usgs/candidate_review_decisions_ai_v3.json --negative-queue data/usgs/negative-review-v1/negative_review_queue.csv --negative-decisions data/usgs/negative_review_decisions.json --data-dir data/usgs --output-dir data/usgs/dataset-training-prep-v6
+python -m ghostwells.prepare_weak_fit --dataset-dir data/usgs/dataset-training-prep-v6
+python -m ghostwells.train_embedding_ranker --dataset-dir data/usgs/dataset-training-prep-v6 --output-dir data/usgs/training-runs/embedding-ranker-v1 --seed 42
 ```
 
-The completed local run produced weighted in-sample accuracy 0.519 and loss 0.693, essentially a no-signal result. The model is retained only as an experiment artifact; it is not a successful detector or deployable model. See the private `training_run.json` for exact parameters and history.
+The earlier scratch-CNN baseline produced weighted in-sample accuracy 0.519 and loss 0.693, essentially a no-signal result. It is retained only as a failed experiment. The frozen-pretrained embedding ranker is the primary weak-label experiment; its 0.919 weighted in-sample accuracy is not validation and may reflect learning the AI screen. Its private run report and uncertain-crop priority queue must not be treated as an accuracy result or deployment model.
 
 For a future blind human fit, install `requirements-training.txt` after the review JSON is imported and the manifest reports `exploratory_fit_ready`. Prepare a county-disjoint split plan from [the template](examples/evaluation_split_plan.template.json), assigning every sheet exactly once. Freeze the split before viewing metrics. The plan’s blindness flag must be true only if the full-map annotation was completed without seeing the detector candidate layer.
 

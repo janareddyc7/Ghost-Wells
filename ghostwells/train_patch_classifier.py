@@ -103,6 +103,7 @@ def read_weak_fit_rows(dataset_dir: Path) -> tuple[dict[str, Any], list[dict[str
             raise ValueError(f"Sample weight is outside (0, 1]: {sample_id}")
         if row.get("label_provenance") not in {
             "human_candidate_review",
+            "human_out_of_frame_rejection",
             "ai_visual_screen_weak_label",
             "human_spatial_sample_negative",
         }:

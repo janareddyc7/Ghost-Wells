@@ -64,6 +64,7 @@ Build a reproducible workflow that reads historical Ohio map evidence, compares 
 - [ ] Annotate full-map tiles, confirm positive/negative coverage, resolve tile overlaps, and freeze county/sheet holdouts before metrics.
 - [ ] Fit the candidate-patch classifier only if reviewed training labels support both classes; exploratory fit only, with evaluation/deployment claims disabled.
 - [x] Assemble a provenance-weighted mixed human/AI weak-fit set and run a 20-epoch exploratory classifier; the model learned no useful in-sample signal and is not promotable.
+- [x] Train a frozen-pretrained visual-embedding ranker on provenance-weighted mixed labels and produce a private uncertain-crop priority queue; it remains fit-only with no performance claim.
 - [ ] Measure the frozen detector only on complete, independently reviewed, held-out map tiles; publish error breakdowns with the private report.
 - [ ] Record pixel center, map transform, CRS, confidence, model version, crop, and source sheet for each detection.
 - [ ] Assess map positioning error on known surveyed wells before choosing any public accuracy claim.

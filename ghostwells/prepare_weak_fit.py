@@ -18,10 +18,12 @@ from ghostwells.build_dataset import file_sha256
 
 HUMAN_POSITIVE = {"confirmed_symbol", "independent_symbol_candidate"}
 HUMAN_NEGATIVE = {"rejected_lookalike", "independent_lookalike"}
+HUMAN_EDGE_NEGATIVE = {"rejected_collar_or_page_furniture"}
 AI_POSITIVE = {"ai_screen_symbol_candidate"}
 AI_NEGATIVE = {"ai_screen_lookalike"}
 WEIGHTS = {
     "human_candidate_review": 1.0,
+    "human_out_of_frame_rejection": 0.25,
     "ai_visual_screen_weak_label": 0.05,
     "human_spatial_sample_negative": 0.25,
 }
@@ -94,6 +96,10 @@ def prepare_weak_fit(dataset_dir: Path) -> dict[str, Any]:
             label = "candidate_well_symbol" if status in HUMAN_POSITIVE else "candidate_lookalike"
             provenance = "human_candidate_review"
             weight = WEIGHTS[provenance]
+        elif status in HUMAN_EDGE_NEGATIVE:
+            label = "candidate_lookalike"
+            provenance = "human_out_of_frame_rejection"
+            weight = WEIGHTS[provenance]
         elif status in AI_POSITIVE | AI_NEGATIVE:
             weak = provisional_by_id.get(item["candidate_id"])
             expected_label = (
@@ -107,8 +113,8 @@ def prepare_weak_fit(dataset_dir: Path) -> dict[str, Any]:
             provenance = "ai_visual_screen_weak_label"
             weight = WEIGHTS[provenance]
         else:
-            # Uncertain, page-furniture, and pending labels stay in the audit
-            # tables but are not silently converted into classifier targets.
+            # Uncertain and pending labels stay in the audit tables; they are
+            # not silently converted into classifier targets.
             continue
         sample_id = item["sample_id"]
         if sample_id in seen:
@@ -190,7 +196,7 @@ def prepare_weak_fit(dataset_dir: Path) -> dict[str, Any]:
             key: round(value, 4) for key, value in sorted(weighted_class_mass.items())
         },
         "sample_weights": WEIGHTS,
-        "excluded_uncertain_and_out_of_frame_count": (
+        "excluded_uncertain_count": (
             len(reviewed_rows) + len(negative_rows) - len(rows)
         ),
         "limitations": [
