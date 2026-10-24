@@ -84,6 +84,8 @@ Extended the dataset builder to validate the sample queue, map-frame provenance,
 
 Final verification: a second build reproduced the same dataset ID and all output hashes. All 131 images are 256×256; the manifest reports 0 training-eligible examples. `npm run check` passed (typecheck, lint, formatting, production build); all eight Python tests passed, including a synthetic end-to-end dataset build and a tampered-crop rejection test; all six source scans passed SHA-256 verification. CI now installs the pinned dataset-rendering dependencies before running those tests.
 
+Provenance: source-manifest SHA-256 `63c89aadb24eb21ae6b164764b2c5c0383b3ed0c615af888747b34994c8d9a3f`; model SHA-256 `5058259e0b7f8ce923f8c138135e15cb9ea09995a8a81fc853b3f74c1e0b12b2`. The builder and sampler source used for this export match commit `a9d45db` (committed after export); the dataset manifest also records hashes for each direct input and the builder implementation.
+
 ## Entry template
 
 Date/time:
