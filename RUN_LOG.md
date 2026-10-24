@@ -86,6 +86,30 @@ Final verification: a second build reproduced the same dataset ID and all output
 
 Provenance: source-manifest SHA-256 `63c89aadb24eb21ae6b164764b2c5c0383b3ed0c615af888747b34994c8d9a3f`; model SHA-256 `5058259e0b7f8ce923f8c138135e15cb9ea09995a8a81fc853b3f74c1e0b12b2`. The builder and sampler source used for this export match commit `a9d45db` (committed after export); the dataset manifest also records hashes for each direct input and the builder implementation.
 
+## 2026-10-24 — Complete provisional screen of remaining candidates
+
+Operator: Codex AI visual screen, one pass. No independent human adjudication. The codes are provisional triage labels, not ground truth.
+
+Inputs: six hash-verified GeoPDFs in `evidence/pilot_sheets.json`; 909-candidate output from the published U-Net; prior 35-item single-review decision overlay; exact pending-review queue and 57 contact sheets under ignored `data/usgs/candidate-review-all-v3/`. The contact sheets showed a 256×256 crop centered on each candidate and a red target cross. Per-sheet map context included explicit oil/gas well labels; Lodi also showed a “Storage Bins” lookalike context.
+
+Screen: all 874 pending candidates screened. Recorded 573 provisional symbol candidates, 159 provisional lookalikes, and 142 uncertain cases. The 35 existing decisions were preserved unchanged. Queue row count, per-crop hashes, batch membership, contact-sheet hashes, codebook lengths, source/candidate/decision hashes, and contact-sheet coverage were validated before applying the overlay. The private AI overlay records reviewer/method, per-item contact sheet/cell, provisional confidence, and independent-review requirement.
+
+Private output: `data/usgs/candidate_review_decisions_ai_v2.json` and `data/usgs/dataset-training-prep-v3/`, dataset ID `c353b1ae8a13c19b`. The export contains 909 reviewed candidate crops plus 96 prior spatial-review crops (1,005 total), and `provisional_training_candidates.csv` with 732 weak-label examples (573 symbol-like, 159 lookalike). The remaining 142 AI-uncertain crops are retained in `reviewed_examples.csv` but excluded from that provisional binary experiment table. All 1,005 crops remain training-ineligible pending independent adjudication; no split is assigned. This is a patch-classification exploration input, not a detector training set, performance estimate, map-wide well inventory, or field-confirmed location layer. The decision overlay hashes the review applier, codebook, all 57 contact sheets, review queue, and original decisions; the dataset manifest carries that review provenance forward.
+
+Location-free snapshot: `evidence/candidate_review_summary.json`. Private crop/decision artifacts, precise pixel positions, and source scans remain ignored and are not in Git. Next action: obtain an independent human review of the AI statuses and spatial sample, resolve disagreements, then decide whether an exploratory training run is justified. Do not calculate validation metrics from these model-selected candidates.
+
+## 2026-10-24 — Blind-review desk and final dataset pipeline
+
+Added a local-only browser review desk that hides AI decisions, verifies the active crop hash, supports keyboard decisions and notes, saves progress in browser storage, and exports a full-queue review with queue/contact-sheet provenance and reviewer attestation. Added a Python importer that rejects mismatched queues, crops, contact sheets, provenance, and decision coverage while preserving the AI decision as history. The dataset builder now keeps AI weak labels separate from independently reviewed fit-only examples and only marks a complete two-class blind review as exploratory fit-ready; evaluation remains prohibited.
+
+Rebuilt private dataset ID `712b67e8b9a3fee1` to `data/usgs/dataset-training-prep-v4/`: 909 candidate chips plus 96 spatial-sample chips; 732 AI weak labels; zero independently reviewed fit examples; zero training-eligible examples today. The state is intentionally **not training ready** until a separate human review is complete. No data or exact locations are committed.
+
+## 2026-10-24 — Contact-sheet integrity and final verification
+
+The first review-desk pass recorded hashes for contact sheets but did not verify them against the original AI screening at the decision point. Tightened the chain: the batch manifest carries each contact-sheet SHA-256; the browser verifies crop and context-sheet hashes before accepting decisions and again on export; both AI and independent-review importers compare them to the originating batch and AI provenance. Regenerated the private `candidate-review-all-v4/` batch from the exact same queue, verified all 874 status codes were preserved in `candidate_review_decisions_ai_v3.json`, and rebuilt the private dataset twice.
+
+Final deterministic snapshot: dataset ID `712b67e8b9a3fee1`, with repeat output hashes matching. It contains 909 candidate crops and 96 spatial-sample crops (1,005 total); 732 provisional AI candidates, 0 independent human fit examples, 0 training-eligible examples, and no evaluation split. All six downloaded source scans match the evidence manifest. Final checks: 10 Python tests passed; `npm run check` passed typecheck, lint, formatting, and production build. The private crops, queues, codebook, and exact coordinates remain ignored and uncommitted.
+
 ## Entry template
 
 Date/time:

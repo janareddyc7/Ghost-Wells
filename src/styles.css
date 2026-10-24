@@ -1438,6 +1438,271 @@ td.mono {
 .button-secondary:focus-visible {
   outline-offset: 2px;
 }
+.candidate-review-desk {
+  margin-top: 30px;
+  padding: 25px;
+  background: #fff;
+  border: 1px solid #e2e8df;
+  border-radius: 7px;
+}
+.candidate-review-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.candidate-review-heading h2 {
+  font-family: Manrope, sans-serif;
+  font-size: 23px;
+  letter-spacing: -0.04em;
+  color: #23392c;
+  margin: 8px 0;
+}
+.candidate-review-heading p {
+  max-width: 650px;
+  font-size: 11px;
+  line-height: 1.65;
+  color: #829083;
+  margin: 0;
+}
+.candidate-review-stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 22px;
+  margin: 22px 0 17px;
+  padding: 13px 15px;
+  background: #f5f7f2;
+  border-radius: 5px;
+  font-size: 10px;
+  color: #788879;
+}
+.candidate-review-stats strong {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: #304939;
+  margin-right: 4px;
+}
+.candidate-integrity {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.integrity-verified {
+  color: #47744f;
+}
+.integrity-failed {
+  color: #a5473d;
+}
+.candidate-reviewer-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-left: auto;
+}
+.candidate-reviewer-field input {
+  width: 150px;
+  height: 29px;
+  border: 1px solid #dfe6dc;
+  border-radius: 4px;
+  padding: 0 7px;
+  color: #3c5641;
+  background: #fff;
+  font-size: 10px;
+}
+.candidate-review-stats .inline-link {
+  margin-left: 0;
+}
+.candidate-review-toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 13px;
+  background: #eef2eb;
+  color: #687a6b;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+}
+.candidate-review-toolbar strong {
+  color: #314a38;
+}
+.candidate-review-visuals {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(210px, 0.65fr);
+  gap: 14px;
+  margin-top: 12px;
+  align-items: start;
+}
+.candidate-contact-panel,
+.candidate-crop-panel {
+  min-width: 0;
+  border: 1px solid #e2e8df;
+  border-radius: 5px;
+  overflow: hidden;
+  background: #f7f8f4;
+}
+.candidate-visual-label {
+  padding: 10px 12px;
+  background: #eff2eb;
+  color: #758477;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.03em;
+}
+.candidate-contact-image {
+  position: relative;
+  max-height: 72vh;
+  overflow: auto;
+  text-align: center;
+  line-height: 0;
+  background: #ecefe8;
+}
+.candidate-contact-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.candidate-contact-image svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.candidate-contact-image rect {
+  fill: #e3a84a22;
+  stroke: #cf703b;
+  stroke-width: 3;
+  vector-effect: non-scaling-stroke;
+}
+.candidate-crop-panel > img {
+  display: block;
+  width: min(100%, 360px);
+  height: auto;
+  margin: 12px auto;
+  border: 1px solid #dfe5db;
+  image-rendering: auto;
+}
+.candidate-crop-panel > p {
+  padding: 0 12px 12px;
+  color: #8b978a;
+  font-size: 9px;
+  line-height: 1.55;
+  margin: 0;
+}
+.candidate-review-note {
+  display: block;
+  margin-top: 12px;
+  color: #5e725f;
+  font-size: 10px;
+  font-weight: 600;
+}
+.candidate-review-note span {
+  color: #99a498;
+  font-weight: 400;
+}
+.candidate-review-note textarea {
+  display: block;
+  width: 100%;
+  margin-top: 7px;
+  padding: 9px 10px;
+  border: 1px solid #dfe6dc;
+  border-radius: 4px;
+  color: #3c5641;
+  background: #fbfcfa;
+  font-size: 10px;
+  line-height: 1.5;
+  resize: vertical;
+}
+.candidate-review-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 13px 0 5px;
+}
+.candidate-choice {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 8px 11px;
+  border: 1px solid #dce5d9;
+  border-radius: 4px;
+  background: #fff;
+  color: #516754;
+  font-size: 10px;
+  font-weight: 600;
+}
+.candidate-choice.selected {
+  border-color: #9fbaa0;
+  background: #edf4ea;
+  color: #34563a;
+}
+.candidate-choice:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.candidate-choice kbd {
+  margin-left: 4px;
+  padding: 2px 5px;
+  border: 1px solid #e3e8e1;
+  border-radius: 3px;
+  background: #f7f8f4;
+  color: #98a69a;
+  font:
+    9px 'DM Mono',
+    monospace;
+}
+.candidate-independence-attestation {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 8px 0;
+  color: #758477;
+  font-size: 10px;
+  line-height: 1.5;
+}
+.candidate-independence-attestation input {
+  accent-color: #426d4b;
+  margin-top: 1px;
+}
+.candidate-review-empty {
+  min-height: 220px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+  color: #78907b;
+}
+.candidate-review-empty strong {
+  font-family: Manrope, sans-serif;
+  font-size: 15px;
+  color: #405a44;
+}
+.candidate-review-empty p {
+  max-width: 560px;
+  color: #829083;
+  font-size: 10px;
+  line-height: 1.65;
+  margin: 0;
+}
+.candidate-review-empty code {
+  color: #536c56;
+}
+.candidate-review-notice,
+.candidate-review-footnote {
+  margin: 9px 0 0;
+  color: #9a693f;
+  font-size: 10px;
+  line-height: 1.6;
+}
+.candidate-review-footnote {
+  color: #a1aca0;
+}
 @media (max-width: 750px) {
   .annotation-heading {
     align-items: flex-start;
@@ -1468,6 +1733,26 @@ td.mono {
     padding: 16px;
   }
   .annotation-viewer-footer {
+    justify-content: flex-start;
+  }
+  .candidate-review-desk {
+    padding: 16px;
+  }
+  .candidate-review-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .candidate-reviewer-field {
+    flex-basis: 100%;
+    margin-left: 0;
+  }
+  .candidate-review-visuals {
+    grid-template-columns: 1fr;
+  }
+  .candidate-review-toolbar {
+    flex-direction: column;
+  }
+  .candidate-review-actions {
     justify-content: flex-start;
   }
 }

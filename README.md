@@ -37,6 +37,8 @@ python -m ghostwells tiles --manifest evidence/pilot_sheets.json --data-dir data
 
 Then open Sheet Survey in the app, load the `data/usgs/tiles` folder in the local annotation desk, and export reviewer annotations. The app stores progress in browser-local storage. Exports include pixel coordinates only; keep them private and do not commit them.
 
+For candidate adjudication, open Sheet Survey and load the complete `data/usgs/candidate-review-all-v4/` folder in the independent review desk. It hides the AI screen, checks the active crop and contact sheet SHA-256 before enabling a decision, saves progress in browser-local storage, and exports a reviewer-attested JSON file. This is a local workflow, not account authentication or a shared review server; keep the queue, scans, and export private.
+
 ### Published U-Net candidate pass
 
 The original research team released a pretrained U-Net and inference notebook through [DOE/NETL EDX (DOI 10.18141/2452768)](https://edx.netl.doe.gov/dataset/u-net-based-usgs-quadrangles-oil-and-gas-well-symbols-identification). The model file is 294 MB, licensed CC BY on the catalog, and is intentionally not committed. Download `unet_model.h5` from that catalog into `data/research_model/`, then verify its MD5 is `44932be2a2fa9690bf3b5572747a158e`. Install `requirements-inference.txt` and run:
@@ -72,7 +74,25 @@ The spatial sample command leaves all chips pending; review every chip and creat
 }
 ```
 
-The export verifies source and crop hashes, regenerates reviewed candidate crops from the source PDFs, and records crop hashes and decision notes alongside the full candidate audit. The checked-in source code does not contain the private decision overlays or map chips; maintain those under ignored `data/usgs/`. The current local export has 35 reviewed model-hit crops and 96 sampled map-interior crops (89 with no well symbol visually apparent, 7 uncertain), all reviewed once. These are single-reviewer observations, not ground truth or a recall estimate. Every example is explicitly ineligible for training until independent review, and the dataset is `not_training_ready`. No random crop split is allowed; any future evaluation must hold out entire sheets/counties.
+The export verifies source and crop hashes, regenerates candidate crops from the source PDFs, and records crop hashes and decision notes alongside the full candidate audit. The checked-in source code does not contain the private decision overlays, codebook, or map chips; maintain those under ignored `data/usgs/`.
+
+As of 24 October 2026, the private pilot contains 909/909 candidate decision records: 35 earlier single-review decisions and a one-pass AI visual screen of the remaining 874 candidates. That screen recorded 573 provisional symbol candidates, 159 provisional lookalikes, and 142 uncertain crops. It also produced 732 provisional candidates for explicitly exploratory training experiments and retained the earlier 96-chip spatial sample. These are triage labels, not ground truth; they do not establish map-wide well counts, model precision/recall, or field-confirmed locations. The dataset remains `not_training_ready`, with zero independently reviewed training-eligible examples and no split. See the location-free aggregate snapshot in [candidate_review_summary.json](evidence/candidate_review_summary.json).
+
+To apply the private coded screen, after the review batch and private codebook are available, run:
+
+```bash
+python -m ghostwells.apply_review_codes --manifest evidence/pilot_sheets.json --candidates data/usgs/review_candidates_300dpi.json --source-decisions data/usgs/candidate_review_decisions.json --queue data/usgs/candidate-review-all-v4/review_queue.csv --batch-manifest data/usgs/candidate-review-all-v4/batch_manifest.json --codebook data/usgs/candidate-review-all-v4/ai_review_codes_v1.json --output data/usgs/candidate_review_decisions_ai_v3.json
+```
+
+Then build the private crop export using the AI overlay as `--decisions`. The builder writes `provisional_training_candidates.csv` for weak-label experiments only; its rows prohibit evaluation use, group by source sheet for any later split, and remain ineligible until independent human adjudication. Do not use candidate-only chips as validation data. Any future evaluation must hold out entire sheets/counties.
+
+After a separate reviewer completes the blind desk and exports `ghost-wells-independent-review.json`, validate and merge that review without discarding the AI history:
+
+```bash
+python -m ghostwells.apply_independent_review --ai-decisions data/usgs/candidate_review_decisions_ai_v3.json --queue data/usgs/candidate-review-all-v4/review_queue.csv --batch-manifest data/usgs/candidate-review-all-v4/batch_manifest.json --review data/usgs/ghost-wells-independent-review.json --output data/usgs/candidate_review_decisions_independent_v1.json
+```
+
+Use that merged overlay as `--decisions` when rebuilding the private crop dataset. Only a complete blind review with both clear classes produces `exploratory_fit_ready`; `independent_training_examples.csv` is for fitting a binary candidate-patch classifier only. It is not a new U-Net detector, evaluation set, recall estimate, or verification of physical wells. No split or evaluation metrics are generated automatically.
 
 The CSV schema is documented in `examples/sheets.csv`. `review_status=reviewed` is required before counts are considered evidence. Rows marked `pending` are excluded from confirmed symbol counts. Download the six scans from the official URLs in `evidence/pilot_sheets.json` before running `verify`; raw files stay ignored by Git. Do not put precise candidate coordinates in public files.
 

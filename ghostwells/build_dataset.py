@@ -29,6 +29,12 @@ TRAIN_LABELS = {
     "rejected_lookalike": "non_well_map_lookalike",
     "rejected_collar_or_page_furniture": "excluded_page_furniture",
     "uncertain": "uncertain",
+    "ai_screen_symbol_candidate": "provisional_well_symbol",
+    "ai_screen_lookalike": "provisional_non_well_map_lookalike",
+    "ai_screen_uncertain": "uncertain",
+    "independent_symbol_candidate": "independent_well_symbol_candidate",
+    "independent_lookalike": "independent_non_well_map_lookalike",
+    "independent_uncertain": "uncertain",
 }
 
 
@@ -116,7 +122,7 @@ def build_dataset(
     if set(frame_data["sheets"]) != set(source_by_id):
         raise ValueError("Map-frame source sheets do not match the evidence manifest")
 
-    decisions: dict[str, dict[str, str]] = decision_data["decisions"]
+    decisions: dict[str, dict[str, Any]] = decision_data["decisions"]
     allowed_statuses = set(TRAIN_LABELS)
     known_candidate_ids = {
         f"{sheet['source_id']}:{index:04d}"
@@ -296,6 +302,8 @@ def build_dataset(
     audit_rows: list[dict[str, Any]] = []
     reviewed_rows: list[dict[str, Any]] = []
     negative_review_rows: list[dict[str, Any]] = []
+    provisional_training_rows: list[dict[str, Any]] = []
+    independent_training_rows: list[dict[str, Any]] = []
 
     try:
         for source_id, source in source_by_id.items():
@@ -324,6 +332,10 @@ def build_dataset(
                 crop_path: str | None = None
 
                 if decision is not None:
+                    training_eligible = status in {
+                        "independent_symbol_candidate",
+                        "independent_lookalike",
+                    }
                     crop = render_crop(page, x, y, scale, crop_size)
                     relative_path = f"crops/{sample_id}.png"
                     crop_file = output_dir / relative_path
@@ -342,13 +354,86 @@ def build_dataset(
                             "mask_area_pixels": candidate["mask_area_pixels"],
                             "review_status": status,
                             "label": label,
-                            "training_eligible": False,
-                            "training_eligibility_reason": "requires_independent_review",
+                            "training_eligible": training_eligible,
+                            "training_eligibility_reason": "independent_blind_visual_review"
+                            if training_eligible
+                            else (
+                                "requires_independent_adjudication"
+                                if status.startswith("ai_screen_")
+                                else (
+                                    "requires_independent_review"
+                                    if not status.startswith("independent_")
+                                    else "uncertain_excluded_from_fit"
+                                )
+                            ),
+                            "reviewer_id": decision.get("reviewer_id", "legacy_single_reviewer"),
+                            "review_method": decision.get("review_method", "manual_crop_review"),
+                            "review_confidence": decision.get("review_confidence", "single_review"),
+                            "independent_review_required": decision.get(
+                                "independent_review_required", True
+                            ),
                             "crop_path": relative_path,
                             "crop_sha256": file_sha256(crop_file),
                             "reviewer_note": note,
                         }
                     )
+                    if status in {"ai_screen_symbol_candidate", "ai_screen_lookalike"}:
+                        provisional_training_rows.append(
+                            {
+                                "sample_id": sample_id,
+                                "candidate_id": candidate_id,
+                                "source_id": source_id,
+                                "sheet": source["name"],
+                                "county": source["county"],
+                                "edition_year": source["year"],
+                                "page_x": x,
+                                "page_y": y,
+                                "mask_area_pixels": candidate["mask_area_pixels"],
+                                "weak_label": (
+                                    "candidate_well_symbol"
+                                    if status == "ai_screen_symbol_candidate"
+                                    else "candidate_lookalike"
+                                ),
+                                "label_provenance": "single_ai_visual_screen",
+                                "reviewer_id": decision.get("reviewer_id", "codex_ai_visual_screen"),
+                                "training_use": "exploratory_only",
+                                "evaluation_use": "prohibited",
+                                "independent_human_review_required": True,
+                                "split_group": source_id,
+                                "crop_path": relative_path,
+                                "crop_sha256": file_sha256(crop_file),
+                            }
+                        )
+                    if status in {
+                        "independent_symbol_candidate",
+                        "independent_lookalike",
+                    }:
+                        independent_training_rows.append(
+                            {
+                                "sample_id": sample_id,
+                                "candidate_id": candidate_id,
+                                "source_id": source_id,
+                                "sheet": source["name"],
+                                "county": source["county"],
+                                "edition_year": source["year"],
+                                "page_x": x,
+                                "page_y": y,
+                                "mask_area_pixels": candidate["mask_area_pixels"],
+                                "training_label": (
+                                    "candidate_well_symbol"
+                                    if status == "independent_symbol_candidate"
+                                    else "candidate_lookalike"
+                                ),
+                                "label_provenance": "independent_blind_human_review",
+                                "reviewer_id": decision.get("reviewer_id"),
+                                "training_use": "candidate_patch_classifier_fit_only",
+                                "evaluation_use": "prohibited",
+                                "split_group": source_id,
+                                "training_eligible": True,
+                                "crop_path": relative_path,
+                                "crop_sha256": file_sha256(crop_file),
+                            }
+                        )
 
                 audit_rows.append(
                     {
@@ -414,12 +499,68 @@ def build_dataset(
     reviewed_fields = list(reviewed_rows[0]) if reviewed_rows else []
     write_csv(output_dir / "candidate_audit.csv", audit_rows, audit_fields)
     write_csv(output_dir / "reviewed_examples.csv", reviewed_rows, reviewed_fields)
+    provisional_training_fields = list(provisional_training_rows[0]) if provisional_training_rows else [
+        "sample_id",
+        "candidate_id",
+        "source_id",
+        "sheet",
+        "county",
+        "edition_year",
+        "page_x",
+        "page_y",
+        "mask_area_pixels",
+        "weak_label",
+        "label_provenance",
+        "reviewer_id",
+        "training_use",
+        "evaluation_use",
+        "independent_human_review_required",
+        "split_group",
+        "crop_path",
+        "crop_sha256",
+    ]
+    write_csv(
+        output_dir / "provisional_training_candidates.csv",
+        provisional_training_rows,
+        provisional_training_fields,
+    )
+    independent_training_fields = list(independent_training_rows[0]) if independent_training_rows else [
+        "sample_id",
+        "candidate_id",
+        "source_id",
+        "sheet",
+        "county",
+        "edition_year",
+        "page_x",
+        "page_y",
+        "mask_area_pixels",
+        "training_label",
+        "label_provenance",
+        "reviewer_id",
+        "training_use",
+        "evaluation_use",
+        "split_group",
+        "training_eligible",
+        "crop_path",
+        "crop_sha256",
+    ]
+    write_csv(
+        output_dir / "independent_training_examples.csv",
+        independent_training_rows,
+        independent_training_fields,
+    )
     negative_fields = list(negative_review_rows[0]) if negative_review_rows else []
     if negative_queue_path is not None:
         write_csv(output_dir / "negative_review_examples.csv", negative_review_rows, negative_fields)
     output_hashes = {
         "candidate_audit_csv_sha256": file_sha256(output_dir / "candidate_audit.csv"),
         "reviewed_examples_csv_sha256": file_sha256(output_dir / "reviewed_examples.csv"),
+        "provisional_training_candidates_csv_sha256": file_sha256(
+            output_dir / "provisional_training_candidates.csv"
+        ),
+        "independent_training_examples_csv_sha256": file_sha256(
+            output_dir / "independent_training_examples.csv"
+        ),
         "negative_review_examples_csv_sha256": (
             file_sha256(output_dir / "negative_review_examples.csv")
             if negative_queue_path is not None
@@ -436,6 +577,7 @@ def build_dataset(
     counts: dict[str, int] = {}
     candidate_status_counts: dict[str, int] = {}
     positive_sheets: set[str] = set()
+    provisional_positive_sheets: set[str] = set()
     for row in audit_rows:
         status = row["review_status"]
         candidate_status_counts[status] = candidate_status_counts.get(status, 0) + 1
@@ -444,19 +586,49 @@ def build_dataset(
         counts[status] = counts.get(status, 0) + 1
         if status == "confirmed_symbol":
             positive_sheets.add(row["source_id"])
+        if status == "ai_screen_symbol_candidate":
+            provisional_positive_sheets.add(row["source_id"])
+    independent_review = decision_data.get("independent_review_provenance")
+    independent_review_complete = (
+        isinstance(independent_review, dict)
+        and independent_review.get("complete") is True
+        and independent_review.get("pending_count") == 0
+        and independent_review.get("reviewed_count")
+        == decision_data.get("review_provenance", {}).get(
+            "reviewed_pending_candidate_count"
+        )
+    )
+    independent_classes = {row["training_label"] for row in independent_training_rows}
+    exploratory_fit_ready = independent_review_complete and independent_classes == {
+        "candidate_well_symbol",
+        "candidate_lookalike",
+    }
     eligible_positive = counts.get("confirmed_symbol", 0)
     eligible_negative = counts.get("rejected_lookalike", 0)
     manifest_out = {
         "schema_version": 1,
         "dataset_id": dataset_id,
         "dataset_type": "private_reviewed_candidate_crop_pilot",
-        "status": "not_training_ready",
-        "training_ready": False,
+        "status": "exploratory_fit_ready" if exploratory_fit_ready else "not_training_ready",
+        "training_ready": exploratory_fit_ready,
         "training_readiness_reason": (
-            "All labels are single-reviewer and require independent adjudication; only three "
-            "candidate positives across two sheets are confirmed. No split is assigned."
+            "Independent blind review is complete and both map-symbol classes are present. "
+            "This supports only an exploratory binary candidate-patch classifier fit; it is "
+            "not detector training or validation."
+            if exploratory_fit_ready
+            else (
+                "AI-screened labels are provisional and require independent human adjudication. "
+                "Candidate-only chips are not a representative sample; no split is assigned and "
+                "the provisional export is for exploratory experiments only."
+            )
         ),
+        "training_ready_scope": "binary_candidate_patch_classifier_fit_only",
+        "evaluation_ready": False,
         "input_hashes": input_hashes,
+        "review_provenance": decision_data.get("review_provenance"),
+        "independent_review_provenance": decision_data.get(
+            "independent_review_provenance"
+        ),
         "runtime": runtime,
         "output_hashes": output_hashes,
         "model_sha256": model_hash,
@@ -466,6 +638,18 @@ def build_dataset(
         "source_sheet_count": len(source_by_id),
         "candidate_count": len(audit_rows),
         "reviewed_crop_count": len(reviewed_rows),
+        "provisional_training_candidate_count": len(provisional_training_rows),
+        "independent_training_example_count": len(independent_training_rows),
+        "independent_review_complete": independent_review_complete,
+        "exploratory_fit_ready": exploratory_fit_ready,
+        "provisional_training_candidate_status_counts": {
+            "ai_screen_symbol_candidate": sum(
+                row["weak_label"] == "candidate_well_symbol" for row in provisional_training_rows
+            ),
+            "ai_screen_lookalike": sum(
+                row["weak_label"] == "candidate_lookalike" for row in provisional_training_rows
+            ),
+        },
         "negative_sample_crop_count": len(negative_review_rows),
         "total_materialized_crop_count": len(reviewed_rows) + len(negative_review_rows),
         "status_counts": counts,
@@ -474,6 +658,14 @@ def build_dataset(
         "provisional_observation_counts": {
             "single_review_candidate_well_symbol": eligible_positive,
             "single_review_candidate_lookalike": eligible_negative,
+            "ai_screen_candidate_well_symbol": counts.get("ai_screen_symbol_candidate", 0),
+            "ai_screen_candidate_lookalike": counts.get("ai_screen_lookalike", 0),
+            "ai_screen_candidate_uncertain": counts.get("ai_screen_uncertain", 0),
+            "independent_candidate_well_symbol": counts.get(
+                "independent_symbol_candidate", 0
+            ),
+            "independent_candidate_lookalike": counts.get("independent_lookalike", 0),
+            "independent_candidate_uncertain": counts.get("independent_uncertain", 0),
             "single_review_candidate_collar_or_page_furniture": counts.get(
                 "rejected_collar_or_page_furniture", 0
             ),
@@ -484,16 +676,23 @@ def build_dataset(
             ),
             "single_review_spatial_sample_uncertain": negative_status_counts.get("uncertain", 0),
         },
-        "training_eligible_example_count": 0,
+        "training_eligible_example_count": len(independent_training_rows),
         "positive_source_sheet_count": len(positive_sheets),
-        "split_policy": "No split assigned; future split must group by sheet/county.",
+        "provisionally_positive_source_sheet_count": len(provisional_positive_sheets),
+        "split_policy": (
+            "No split assigned; any future training/evaluation partition must group by sheet "
+            "or county. Candidate-only samples must never be used as validation data."
+        ),
         "limitations": [
             "Labels are from one visual reviewer and have not been independently adjudicated.",
+            "AI-screened labels are provisional weak labels, not human-verified annotations.",
+            "Independent candidate labels are eligible only for fit-only patch-classifier experiments; evaluation remains prohibited.",
             "Reviewed crops are selected from model candidates, not a representative sample.",
             "The model-negative grid is a sparse single-reviewer screen and cannot estimate recall.",
             "Model-negative crops are not marked training-eligible until independently reviewed.",
             "Candidate detections may duplicate a physical symbol; no geospatial or symbol deduplication was done.",
             "Pixel crops are not georeferenced well locations and do not establish field conditions.",
+            "provisional_training_candidates.csv is for exploratory training experiments only; it is not evaluation data.",
         ],
     }
     (output_dir / "dataset_manifest.json").write_text(

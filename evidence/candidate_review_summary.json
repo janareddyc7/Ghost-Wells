@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "snapshot_id": "712b67e8b9a3fee1",
+  "generated_on": "2026-10-24",
+  "source_sheet_count": 6,
+  "candidate_count": 909,
+  "candidate_decision_counts": {
+    "all_candidates_with_a_status": 909,
+    "prior_single_review_confirmed_symbol": 3,
+    "prior_single_review_lookalike": 4,
+    "prior_single_review_page_furniture": 5,
+    "prior_single_review_uncertain": 23,
+    "ai_provisional_symbol_candidate": 573,
+    "ai_provisional_lookalike": 159,
+    "ai_provisional_uncertain": 142
+  },
+  "ai_screen": {
+    "candidates_screened": 874,
+    "contact_sheet_count": 57,
+    "independently_adjudicated": false
+  },
+  "exploratory_training": {
+    "provisional_candidate_count": 732,
+    "training_eligible_count": 0,
+    "evaluation_use": "prohibited",
+    "status": "not_training_ready"
+  },
+  "spatial_review_sample": {
+    "crop_count": 96,
+    "uncertain_count": 7,
+    "single_reviewer_no_symbol_apparent_count": 89
+  },
+  "limitations": [
+    "Candidate crops are model-selected and are not a complete map inventory.",
+    "AI-screened labels are provisional, single-pass judgments and are not ground truth.",
+    "No independent human adjudication, held-out evaluation, precision/recall estimate, or ODNR match is available.",
+    "Exact candidate positions and source crops remain private and are not included in this snapshot."
+  ]
+}

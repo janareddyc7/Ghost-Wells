@@ -45,6 +45,12 @@ A first broad page-edge screen was superseded on 2026-10-24 by manually traced p
 
 The [USGS copyright guidance](https://www.usgs.gov/faqs/are-usgs-topographic-maps-copyrighted) says historical USGS topographic maps are public domain and asks for USGS credit. Public redistribution of source crops still needs the project's privacy review because a lead could reveal an exact location.
 
+## Candidate triage update — 2026-10-24
+
+The private queue's 874 candidates that were pending at the time of the edge-triage entry were screened once in 57 map-specific contact sheets. The resulting overlay preserves all 35 prior decisions and assigns provisional AI statuses to the remaining candidates: 573 symbol-like candidates, 159 lookalikes, and 142 uncertain. Source chips, contact sheets, codebook, pixel locations, and decisions remain ignored/private under `data/usgs/`.
+
+The resulting private dataset snapshot is `712b67e8b9a3fee1`: 909 candidate crops plus 96 spatial-review crops (1,005 crops total). Its 732-row provisional training-candidate file is for exploratory experiments only; it is not evaluation data. The dataset has zero independently adjudicated training-eligible examples, no split, and remains **not training ready**. The local blind-review desk and hash-validating importer are implemented; a separate human still needs to review the 874 AI-screened candidates. No full-sheet symbol inventory, recall estimate, independent reviewer agreement, ODNR match, or field confirmation has been established. The contact-sheet screen is an AI-only triage pass, not independent ground truth.
+
 ## Next measurement
 
-Record all well symbols and lookalikes in each sampled sheet, with a reproducible collar mask and an independent review subset. Only then set these inventory rows to `reviewed` in the survey CSV, report density by sheet/region/era, and choose whether to continue to model inference.
+Obtain independent human adjudication of the provisional candidate labels and spatial sample, then perform a complete symbol/lookalike inventory by sheet with a reproducible collar mask. Only then set inventory rows to `reviewed` in the survey CSV, report density by sheet/region/era, estimate model performance on an appropriate held-out set, and choose whether to continue.

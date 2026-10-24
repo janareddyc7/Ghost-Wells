@@ -51,13 +51,14 @@ Build a reproducible workflow that reads historical Ohio map evidence, compares 
 
 - [ ] Confirm model weights, license, and reproducible inference path from Ciulla et al. before using published metrics as project metrics.
 - [ ] Label Ohio symbols and hard negatives; split validation by county and sheet, not random chips.
-- [x] Generate a reproducible private review queue; 35/909 candidates now have crop-level decisions or uncertainty notes, with 874 still pending.
+- [x] Generate a reproducible private review queue; all 909 candidates now have a recorded status, including 874 provisional AI-screened cases. This is not independent adjudication or a complete map inventory.
 - [x] Trace conservative rectangular map-frame bounds for all six pilot sheets, with an explicit boundary buffer; exact edge geometry remains a refinement.
 - [x] Review all collar/exterior and frame-edge candidate crops once; reject only five clear page-furniture hits and leave boundary-near cases uncertain.
 - [x] Build a provenance-checked private crop pilot with source/candidate/decision/frame hashes, one crop per reviewed hit, and an explicit no-training-ready gate.
 - [x] Generate and visually screen a deterministic 4×4 spatial sample per sheet, 96 chips total; retain seven ambiguous crops as uncertain and do not mark any sample training-eligible.
-- [x] Export a combined private pilot with 909 candidate audit rows, 35 reviewed-hit crops, 96 spatial-review crops, pinned renderer versions, and an explicit no-training-ready gate.
-- [ ] Continue candidate review sheet-by-sheet and obtain independent review of both hit and spatial samples before producing validation metrics.
+- [x] Export a combined private pilot with 909 candidate audit rows/crops, 96 spatial-review crops, 732 provisional exploratory-training candidates, pinned renderer versions, and an explicit zero-training-eligible gate.
+- [x] Screen all 874 previously pending candidate crops once in 57 map-specific contact sheets; record 573 provisional symbol candidates, 159 provisional lookalikes, and 142 uncertain cases with crop/batch provenance.
+- [ ] Obtain independent human adjudication of the AI screen and spatial sample; resolve disagreements before any accuracy estimate or training promotion.
 - [ ] Record pixel center, map transform, CRS, confidence, model version, crop, and source sheet for each detection.
 - [ ] Assess map positioning error on known surveyed wells before choosing any public accuracy claim.
 - [ ] Merge duplicate chips; then test edition fusion at 15 m and ODNR matching at 50, 100, and 200 m.
@@ -66,6 +67,7 @@ Build a reproducible workflow that reads historical Ohio map evidence, compares 
 ### 3. Product and privacy
 
 - [x] Create initial responsive review interface with explicit sample state.
+- [x] Add a local-only blind candidate adjudication desk with SHA-256 crop/contact-sheet checks, browser-local progress, keyboard labels, and private reviewer-attested export; this does not replace authentication or a shared review service.
 - [ ] Connect interface to real, versioned aggregate survey output.
 - [ ] Design private reviewer authentication and authorization before storing precise leads online.
 - [ ] Implement decision history, source evidence viewer, and export only after data contract review.

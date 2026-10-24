@@ -23,7 +23,9 @@ import {
   X,
 } from 'lucide-react'
 import pilot from '../evidence/pilot_sheets.json'
+import candidateReview from '../evidence/candidate_review_summary.json'
 import AnnotationDesk from './components/AnnotationDesk'
+import CandidateReviewDesk from './components/CandidateReviewDesk'
 
 type View = 'overview' | 'survey' | 'pipeline' | 'about'
 type SheetStatus = 'Example seen' | 'Collar note'
@@ -53,7 +55,7 @@ const stages = [
     title: 'Read the symbols',
     body: 'Review map crops, distinguish well symbols from lookalikes, and measure coverage.',
     icon: ScanSearch,
-    state: 'Planned',
+    state: 'AI triage complete',
   },
   {
     number: '03',
@@ -286,11 +288,14 @@ function App() {
                   <Radio size={18} />
                 </div>
                 <div>
-                  <strong>Research status: source survey underway</strong>
+                  <strong>
+                    Research status: candidate triage complete · independent review
+                    pending
+                  </strong>
                   <p>
-                    Labeled well symbols appear on five sampled Ohio sheets. Full-sheet
-                    counts and independent review are still pending. The map graphic is
-                    illustrative; no candidate locations are displayed.
+                    The 874 remaining model candidates received one provisional AI visual
+                    screen. This is not ground truth or a full-sheet count; no candidate
+                    locations are displayed.
                   </p>
                 </div>
                 <ArrowUpRight size={18} />
@@ -335,9 +340,11 @@ function App() {
                       <Database size={20} />
                       <ArrowUpRight size={16} />
                     </div>
-                    <div className="metric-value">—</div>
-                    <div className="metric-label">Record matches</div>
-                    <div className="metric-note">ODNR comparison is a later stage</div>
+                    <div className="metric-value">
+                      {candidateReview.ai_screen.candidates_screened}
+                    </div>
+                    <div className="metric-label">Pending candidates screened</div>
+                    <div className="metric-note">One AI pass · provisional labels</div>
                   </div>
                 </div>
               </section>
@@ -406,8 +413,10 @@ function App() {
               <div className="notice-line">
                 <FileSearch size={18} />
                 <span>
-                  <strong>0 of 6 fully counted.</strong> Example sightings establish that
-                  the symbols exist; complete counts and second review remain open.
+                  <strong>0 of 6 fully inventoried.</strong> All 909 model candidates have
+                  a screening status, including 874 provisional AI judgments. Independent
+                  adjudication, map-wide counts, precision/recall, and ODNR matches are
+                  still open; the private exact locations are not shown here.
                 </span>
               </div>
               <div className="table-panel">
@@ -516,6 +525,7 @@ function App() {
                   </a>
                 </div>
               </div>
+              <CandidateReviewDesk />
               <AnnotationDesk />
             </section>
           )}

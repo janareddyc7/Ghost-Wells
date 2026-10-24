@@ -82,6 +82,12 @@ def build_queue(
                 "rejected_lookalike",
                 "confirmed_symbol",
                 "uncertain",
+                "ai_screen_symbol_candidate",
+                "ai_screen_lookalike",
+                "ai_screen_uncertain",
+                "independent_symbol_candidate",
+                "independent_lookalike",
+                "independent_uncertain",
             }:
                 raise ValueError(f"Unsupported review status for {candidate_id}")
             rows.append(
