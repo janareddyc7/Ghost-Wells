@@ -75,6 +75,7 @@ Build a reproducible workflow that reads historical Ohio map evidence, compares 
 
 - [x] Create initial responsive review interface with explicit sample state.
 - [x] Add a local-only blind candidate adjudication desk with SHA-256 crop/contact-sheet checks, browser-local progress, keyboard labels, and private reviewer-attested export; this does not replace authentication or a shared review service.
+- [x] Add a separate fit-only model-triage view for the uncertain-crop priority queue; validate a small private package and every crop hash without mixing scores into blinded review.
 - [ ] Connect interface to real, versioned aggregate survey output.
 - [ ] Design private reviewer authentication and authorization before storing precise leads online.
 - [ ] Implement decision history, source evidence viewer, and export only after data contract review.

@@ -126,6 +126,8 @@ Added a reproducible weak-fit assembler that verifies all three source-table has
 
 Built dataset v6 and a provenance-weighted fit table with 833 examples: 576 candidate-well-symbol / 257 non-symbol, with effective weighted class mass 31.65 / 35.45. The fit includes seven clear human candidate decisions at 1.0, five human page-furniture rejections at 0.25, 732 AI labels at 0.05, and 89 sparse spatial negatives at 0.25. All 172 uncertain samples are excluded from fitting but scored into a private priority queue. Trained a frozen torchvision EfficientNet-B0 ImageNet1K_V1 embedding plus L2-regularized 1280-d linear probe on CPU. Artifact: `data/usgs/training-runs/embedding-ranker-v1/efficientnet_b0_embedding_ranker.pt`; checkpoint SHA-256 `18f2677415c7108f09e7394c0dc95674ce53b127afa85623c38e3dfbac9fb706`. The 0.919 weighted in-sample accuracy is not validation and may largely reflect the AI teacher labels; evaluation/deployment remain disabled. The uncertain queue contains uncalibrated visual-priority scores, not probabilities. Independently labeled held-out sheets are still needed for performance claims.
 
+Added a separate local-only Model triage view; it does not write decisions or expose the AI rank inside the blinded-review workflow. `ghostwells.export_triage_package` verifies the run and queue hashes, score ordering, uncertain-only status, and every crop hash, then copies only the 172 ranked crops into a private package. The browser verifies the package/report/queue and all crop hashes before display. The feature is triage-only; no performance or deployment claim is enabled.
+
 Date/time:
 
 Operator:

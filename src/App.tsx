@@ -13,6 +13,7 @@ import {
   ExternalLink,
   FileSearch,
   Layers3,
+  ListOrdered,
   MapPinned,
   Menu,
   Radio,
@@ -26,8 +27,9 @@ import pilot from '../evidence/pilot_sheets.json'
 import candidateReview from '../evidence/candidate_review_summary.json'
 import AnnotationDesk from './components/AnnotationDesk'
 import CandidateReviewDesk from './components/CandidateReviewDesk'
+import ModelTriageDesk from './components/ModelTriageDesk'
 
-type View = 'overview' | 'survey' | 'pipeline' | 'about'
+type View = 'overview' | 'survey' | 'triage' | 'pipeline' | 'about'
 type SheetStatus = 'Example seen' | 'Collar note'
 
 const sheets = pilot.sheets.map((sheet) => ({
@@ -193,6 +195,12 @@ function App() {
             <MapPinned size={18} /> Sheet survey <span className="nav-count">06</span>
           </button>
           <button
+            className={`nav-item ${view === 'triage' ? 'active' : ''}`}
+            onClick={() => navigate('triage')}
+          >
+            <ListOrdered size={18} /> Model triage <span className="nav-count">172</span>
+          </button>
+          <button
             className={`nav-item ${view === 'pipeline' ? 'active' : ''}`}
             onClick={() => navigate('pipeline')}
           >
@@ -238,9 +246,11 @@ function App() {
                 ? 'Overview'
                 : view === 'survey'
                   ? 'Sheet survey'
-                  : view === 'pipeline'
-                    ? 'Method & stages'
-                    : 'About the project'}
+                  : view === 'triage'
+                    ? 'Model triage'
+                    : view === 'pipeline'
+                      ? 'Method & stages'
+                      : 'About the project'}
             </strong>
           </div>
           <div className="topbar-right">
@@ -575,6 +585,8 @@ function App() {
               </div>
             </section>
           )}
+
+          {view === 'triage' && <ModelTriageDesk />}
 
           {view === 'about' && (
             <section className="inner-page">

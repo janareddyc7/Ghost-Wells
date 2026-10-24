@@ -106,6 +106,15 @@ python -m ghostwells.train_embedding_ranker --dataset-dir data/usgs/dataset-trai
 
 The earlier scratch-CNN baseline produced weighted in-sample accuracy 0.519 and loss 0.693, essentially a no-signal result. It is retained only as a failed experiment. The frozen-pretrained embedding ranker is the primary weak-label experiment; its 0.919 weighted in-sample accuracy is not validation and may reflect learning the AI screen. Its private run report and uncertain-crop priority queue must not be treated as an accuracy result or deployment model.
 
+To open the 172 uncertain crops in the app, export a small local-only package containing only those crops, then run the frontend locally:
+
+```bash
+python -m ghostwells.export_triage_package --dataset-dir data/usgs/dataset-training-prep-v6 --ranker-dir data/usgs/training-runs/embedding-ranker-v1 --output-dir data/usgs/training-runs/embedding-ranker-v1/triage-package-v1
+npm run dev
+```
+
+Open **Model triage** in the app and load the complete `triage-package-v1` folder. The browser verifies the report, queue, and every crop hash; files are read locally and are not uploaded by this view. This ranked-crop browser is separate from the blinded-review desk and records no decisions. Keep the package private.
+
 For a future blind human fit, install `requirements-training.txt` after the review JSON is imported and the manifest reports `exploratory_fit_ready`. Prepare a county-disjoint split plan from [the template](examples/evaluation_split_plan.template.json), assigning every sheet exactly once. Freeze the split before viewing metrics. The plan’s blindness flag must be true only if the full-map annotation was completed without seeing the detector candidate layer.
 
 Rebuild the dataset with the imported review, then fit a small candidate-patch classifier on training-counties only. The trainer verifies the manifest and every crop hash; it records only in-sample training history and creates no validation metrics:

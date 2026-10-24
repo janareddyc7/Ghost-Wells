@@ -1756,3 +1756,225 @@ td.mono {
     justify-content: flex-start;
   }
 }
+
+.model-triage-page .page-heading {
+  margin-bottom: 30px;
+}
+.model-triage-disclosure {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  padding: 17px 19px;
+  margin-bottom: 20px;
+  border: 1px solid #efdfc7;
+  border-radius: 5px;
+  background: #fff7ea;
+  color: #9a7445;
+}
+.model-triage-disclosure > svg {
+  flex: 0 0 auto;
+  margin-top: 1px;
+}
+.model-triage-disclosure strong {
+  color: #66502e;
+  font-size: 12px;
+}
+.model-triage-disclosure p {
+  margin: 5px 0 0;
+  color: #947c5a;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.model-triage-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  border: 1px solid #e2e8df;
+  border-radius: 5px;
+  background: #fff;
+}
+.model-triage-toolbar > div {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  color: #788879;
+  font-size: 11px;
+}
+.model-triage-toolbar > div > strong {
+  color: #304939;
+  font:
+    700 15px 'DM Mono',
+    monospace;
+}
+.model-triage-integrity {
+  padding-left: 12px;
+  border-left: 1px solid #e2e8df;
+  color: #758477;
+}
+.model-triage-load {
+  position: relative;
+  flex: 0 0 auto;
+  cursor: pointer;
+}
+.model-triage-load:has(input:disabled) {
+  opacity: 0.65;
+  cursor: progress;
+}
+.model-triage-filters {
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+  margin: 14px 0;
+}
+.model-triage-filters .search-box input {
+  width: min(260px, 42vw);
+}
+.model-triage-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(250px, 0.65fr);
+  gap: 18px;
+  padding: 15px;
+  border: 1px solid #e2e8df;
+  border-radius: 6px;
+  background: #fff;
+}
+.model-triage-image-panel {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #e2e8df;
+  border-radius: 5px;
+  background: #f7f8f4;
+}
+.model-triage-image {
+  display: grid;
+  min-height: 300px;
+  max-height: 68vh;
+  place-items: center;
+  overflow: auto;
+  background: #ecefe8;
+}
+.model-triage-image img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 68vh;
+  image-rendering: pixelated;
+}
+.model-triage-details {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 9px 5px;
+}
+.model-triage-rank {
+  color: #829083;
+  font:
+    10px 'DM Mono',
+    monospace;
+  letter-spacing: 0.08em;
+}
+.model-triage-details h2 {
+  margin: 19px 0 3px;
+  color: #23392c;
+  font:
+    700 25px Manrope,
+    sans-serif;
+  letter-spacing: -0.04em;
+}
+.model-triage-location {
+  margin: 0;
+  color: #7e8c80;
+  font-size: 11px;
+}
+.model-triage-details dl {
+  display: grid;
+  gap: 0;
+  margin: 24px 0;
+  border-top: 1px solid #e9eee7;
+}
+.model-triage-details dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #e9eee7;
+}
+.model-triage-details dt {
+  color: #89968a;
+  font-size: 10px;
+}
+.model-triage-details dd {
+  margin: 0;
+  color: #354b39;
+  font:
+    11px 'DM Mono',
+    monospace;
+  text-align: right;
+}
+.model-triage-details dd.model-triage-id {
+  overflow-wrap: anywhere;
+  font-size: 9px;
+}
+.model-triage-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: auto;
+}
+.model-triage-navigation > span {
+  color: #89968a;
+  font:
+    10px 'DM Mono',
+    monospace;
+}
+.model-triage-empty {
+  margin-top: 16px;
+  border: 1px dashed #dfe7dc;
+  border-radius: 5px;
+  background: #fff;
+}
+.model-triage-footnote {
+  margin: 15px 0 0;
+  color: #9aa69a;
+  font-size: 10px;
+  line-height: 1.6;
+}
+@media (max-width: 750px) {
+  .model-triage-page {
+    padding: 38px 20px 56px;
+  }
+  .model-triage-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .model-triage-integrity {
+    padding-left: 0;
+    border-left: 0;
+  }
+  .model-triage-filters {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .model-triage-filters .search-box input {
+    width: 100%;
+  }
+  .model-triage-filters .search-box,
+  .model-triage-filters .filter-box {
+    width: 100%;
+  }
+  .model-triage-card {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .model-triage-image {
+    min-height: 220px;
+  }
+  .model-triage-details h2 {
+    margin-top: 13px;
+  }
+}
