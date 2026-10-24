@@ -10,7 +10,8 @@ from PIL import Image
 
 from ghostwells.build_dataset import file_sha256
 from ghostwells.evaluate_detector import evaluate_detector, maximum_matches
-from ghostwells.train_patch_classifier import read_fit_rows
+from ghostwells.prepare_weak_fit import prepare_weak_fit
+from ghostwells.train_patch_classifier import read_fit_rows, read_weak_fit_rows
 from ghostwells.validation import load_split_plan
 
 
@@ -107,6 +108,108 @@ class TrainingEvaluationTests(unittest.TestCase):
         self.write_json(manifest_path, manifest)
         with self.assertRaisesRegex(ValueError, "not marked exploratory_fit_ready"):
             read_fit_rows(dataset_dir)
+
+    def test_mixed_weak_fit_preserves_provenance_and_keeps_eval_closed(self) -> None:
+        dataset_dir = self.root / "weak-dataset"
+        crop_dir = dataset_dir / "crops"
+        crop_dir.mkdir(parents=True)
+
+        def crop(sample_id: str) -> str:
+            path = crop_dir / f"{sample_id}.png"
+            Image.new("RGB", (8, 8), color=(40, 20, 10)).save(path)
+            return file_sha256(path)
+
+        reviewed_rows = []
+        provisional_rows = []
+        for sample_id, status in [
+            ("human-pos", "confirmed_symbol"),
+            ("human-neg", "rejected_lookalike"),
+            ("ai-pos", "ai_screen_symbol_candidate"),
+            ("ai-neg", "ai_screen_lookalike"),
+            ("uncertain", "uncertain"),
+        ]:
+            digest = crop(sample_id)
+            reviewed_rows.append(
+                {
+                    "sample_id": sample_id,
+                    "candidate_id": sample_id,
+                    "source_id": "sheet-a",
+                    "sheet": "A",
+                    "county": "A county",
+                    "edition_year": "1960",
+                    "review_status": status,
+                    "crop_path": f"crops/{sample_id}.png",
+                    "crop_sha256": digest,
+                }
+            )
+            if status.startswith("ai_screen_"):
+                provisional_rows.append(
+                    {
+                        "sample_id": sample_id,
+                        "candidate_id": sample_id,
+                        "weak_label": "candidate_well_symbol"
+                        if status == "ai_screen_symbol_candidate"
+                        else "candidate_lookalike",
+                        "crop_sha256": digest,
+                    }
+                )
+        negative_digest = crop("sample-neg")
+        negative_rows = [
+            {
+                "sample_id": "sample-neg",
+                "source_id": "sheet-a",
+                "sheet": "A",
+                "county": "A county",
+                "edition_year": "1960",
+                "review_status": "reviewed_no_well_symbol_visible",
+                "crop_path": "crops/sample-neg.png",
+                "crop_sha256": negative_digest,
+            }
+        ]
+        tables = {
+            "reviewed_examples.csv": reviewed_rows,
+            "provisional_training_candidates.csv": provisional_rows,
+            "negative_review_examples.csv": negative_rows,
+        }
+        hash_keys = {
+            "reviewed_examples.csv": "reviewed_examples_csv_sha256",
+            "provisional_training_candidates.csv": "provisional_training_candidates_csv_sha256",
+            "negative_review_examples.csv": "negative_review_examples_csv_sha256",
+        }
+        output_hashes = {}
+        for filename, rows in tables.items():
+            path = dataset_dir / filename
+            with path.open("w", newline="", encoding="utf-8") as stream:
+                writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
+                writer.writeheader()
+                writer.writerows(rows)
+            output_hashes[hash_keys[filename]] = file_sha256(path)
+        manifest_path = dataset_dir / "dataset_manifest.json"
+        self.write_json(
+            manifest_path,
+            {
+                "dataset_id": "test-weak-fit",
+                "crop_size_pixels": 8,
+                "training_ready": False,
+                "evaluation_ready": False,
+                "output_hashes": output_hashes,
+            },
+        )
+
+        result = prepare_weak_fit(dataset_dir)
+        self.assertEqual(result["example_count"], 5)
+        self.assertEqual(result["class_counts"]["candidate_well_symbol"], 2)
+        self.assertEqual(result["class_counts"]["candidate_lookalike"], 3)
+        self.assertEqual(result["provenance_counts"]["ai_visual_screen_weak_label"], 2)
+        manifest, rows = read_weak_fit_rows(dataset_dir)
+        self.assertEqual(len(rows), 5)
+        self.assertFalse(manifest["training_ready"])
+        self.assertFalse(manifest["evaluation_ready"])
+
+        manifest["evaluation_ready"] = True
+        self.write_json(manifest_path, manifest)
+        with self.assertRaisesRegex(ValueError, "keep evaluation/deployment gates closed"):
+            read_weak_fit_rows(dataset_dir)
 
     def test_eval_scores_complete_held_out_sheet_with_one_to_one_matches(self) -> None:
         sources_path = self.root / "sources.json"

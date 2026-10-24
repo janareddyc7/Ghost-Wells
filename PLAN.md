@@ -58,11 +58,12 @@ Build a reproducible workflow that reads historical Ohio map evidence, compares 
 - [x] Generate and visually screen a deterministic 4×4 spatial sample per sheet, 96 chips total; retain seven ambiguous crops as uncertain and do not mark any sample training-eligible.
 - [x] Export a combined private pilot with 909 candidate audit rows/crops, 96 spatial-review crops, 732 provisional exploratory-training candidates, pinned renderer versions, and an explicit zero-training-eligible gate.
 - [x] Screen all 874 previously pending candidate crops once in 57 map-specific contact sheets; record 573 provisional symbol candidates, 159 provisional lookalikes, and 142 uncertain cases with crop/batch provenance.
-- [x] Complete the 874-candidate human review (owner-reported; export/import validation pending).
-- [ ] Review the 96-chip spatial sample and resolve uncertain marks before treating it as a map-wide inventory.
+- [ ] Complete human adjudication of the 874 AI-screened candidates; current workspace has no human review export.
+- [x] Review the 96-chip spatial sample; 89 were marked no symbol visible and 7 uncertain. It is sparse single-reviewer evidence, not a complete inventory.
 - [ ] Import both review exports, validate exact coverage and label counts, preserve AI labels as history, and rebuild the private dataset manifest.
-- [ ] Confirm map-wide positive/negative annotation coverage, resolve tile overlaps, and freeze county/sheet holdouts before metrics.
+- [ ] Annotate full-map tiles, confirm positive/negative coverage, resolve tile overlaps, and freeze county/sheet holdouts before metrics.
 - [ ] Fit the candidate-patch classifier only if reviewed training labels support both classes; exploratory fit only, with evaluation/deployment claims disabled.
+- [x] Assemble a provenance-weighted mixed human/AI weak-fit set and run a 20-epoch exploratory classifier; the model learned no useful in-sample signal and is not promotable.
 - [ ] Measure the frozen detector only on complete, independently reviewed, held-out map tiles; publish error breakdowns with the private report.
 - [ ] Record pixel center, map transform, CRS, confidence, model version, crop, and source sheet for each detection.
 - [ ] Assess map positioning error on known surveyed wells before choosing any public accuracy claim.

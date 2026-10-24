@@ -86,7 +86,7 @@ python -m ghostwells.apply_review_codes --manifest evidence/pilot_sheets.json --
 
 Then build the private crop export using the AI overlay as `--decisions`. The builder writes `provisional_training_candidates.csv` for weak-label experiments only; its rows prohibit evaluation use, group by source sheet for any later split, and remain ineligible until independent human adjudication. Do not use candidate-only chips as validation data. Any future evaluation must hold out entire sheets/counties.
 
-After you complete the blind candidate review and export `ghost-wells-independent-review.json`, validate and merge it without discarding the AI history. The owner reports completing this review, but the export is not yet present in this workspace; no labels or counts are treated as imported until the file passes validation:
+If a blind candidate review is later completed and exported as `ghost-wells-independent-review.json`, validate and merge it without discarding the AI history. No such human review has been completed for this snapshot:
 
 ```bash
 python -m ghostwells.apply_independent_review --ai-decisions data/usgs/candidate_review_decisions_ai_v3.json --queue data/usgs/candidate-review-all-v4/review_queue.csv --batch-manifest data/usgs/candidate-review-all-v4/batch_manifest.json --review data/usgs/ghost-wells-independent-review.json --output data/usgs/candidate_review_decisions_independent_v1.json
@@ -96,7 +96,16 @@ Use that merged overlay as `--decisions` when rebuilding the private crop datase
 
 ### Fit-only classifier and held-out detector evaluation
 
-Install `requirements-training.txt` only after the private blind-review JSON has been imported and the dataset manifest reports `exploratory_fit_ready`. Prepare a county-disjoint split plan from [the template](examples/evaluation_split_plan.template.json), assigning every sheet exactly once. Freeze the split before viewing metrics. The plan’s blindness flag must be true only if the full-map annotation was completed without seeing the detector candidate layer.
+For an explicitly weak-label exploratory run using the available AI and single-reviewer tiers, prepare the weighted fit table and train with no validation metrics. AI labels are assigned 0.05 weight, clear earlier human candidate labels 1.0, and sparse human spatial negatives 0.25. Uncertain and out-of-frame examples remain excluded from fitting. This experiment is not human-review-ready, evaluation-ready, or deployment-ready:
+
+```bash
+python -m ghostwells.prepare_weak_fit --dataset-dir data/usgs/dataset-training-prep-v5
+python -m ghostwells.train_patch_classifier --dataset-dir data/usgs/dataset-training-prep-v5 --output-dir data/usgs/training-runs/weak-fit-v1 --weak-supervision --epochs 20 --batch-size 32 --seed 42
+```
+
+The completed local run produced weighted in-sample accuracy 0.519 and loss 0.693, essentially a no-signal result. The model is retained only as an experiment artifact; it is not a successful detector or deployable model. See the private `training_run.json` for exact parameters and history.
+
+For a future blind human fit, install `requirements-training.txt` after the review JSON is imported and the manifest reports `exploratory_fit_ready`. Prepare a county-disjoint split plan from [the template](examples/evaluation_split_plan.template.json), assigning every sheet exactly once. Freeze the split before viewing metrics. The plan’s blindness flag must be true only if the full-map annotation was completed without seeing the detector candidate layer.
 
 Rebuild the dataset with the imported review, then fit a small candidate-patch classifier on training-counties only. The trainer verifies the manifest and every crop hash; it records only in-sample training history and creates no validation metrics:
 
@@ -111,7 +120,7 @@ To measure the frozen published detector, export the full map-tile annotations f
 python -m ghostwells.evaluate_detector --annotations data/usgs/ghost-wells-review-annotations.json --tile-manifest data/usgs/tiles/tile_manifest.json --candidates data/usgs/review_candidates_300dpi.json --source-manifest evidence/pilot_sheets.json --split-plan data/usgs/evaluation_split_plan.json --output data/usgs/evaluation/detector-heldout-v1.json
 ```
 
-The current checked-in tile queue still says `pending_human_review` because the browser’s completed review is not imported into the project files yet. Re-export the browser-local annotation state if needed; do not interpret the current 594 pending tile records as evidence that no review was performed.
+The current tile queue is `pending_human_review` with 0/594 chips reviewed. Full-map annotations and the 874-candidate human adjudication are not complete; do not describe the current labels as independently verified.
 
 The CSV schema is documented in `examples/sheets.csv`. `review_status=reviewed` is required before counts are considered evidence. Rows marked `pending` are excluded from confirmed symbol counts. Download the six scans from the official URLs in `evidence/pilot_sheets.json` before running `verify`; raw files stay ignored by Git. Do not put precise candidate coordinates in public files.
 
