@@ -35,6 +35,7 @@ type ReviewState = {
   reviewer: string
   marks: Mark[]
   reviewed: string[]
+  blindToModelCandidates: boolean
 }
 
 const STORAGE_KEY = 'ghost-wells-local-review-v1'
@@ -57,9 +58,10 @@ function readSavedState(): ReviewState {
       reviewer: typeof parsed.reviewer === 'string' ? parsed.reviewer : '',
       marks: Array.isArray(parsed.marks) ? parsed.marks : [],
       reviewed: Array.isArray(parsed.reviewed) ? parsed.reviewed : [],
+      blindToModelCandidates: parsed.blindToModelCandidates === true,
     }
   } catch {
-    return { reviewer: '', marks: [], reviewed: [] }
+    return { reviewer: '', marks: [], reviewed: [], blindToModelCandidates: false }
   }
 }
 
@@ -205,6 +207,7 @@ export default function AnnotationDesk() {
       exported_at_utc: new Date().toISOString(),
       coordinate_space: 'rendered_page_pixels',
       reviewer: review.reviewer,
+      review_inventory_blind_to_model_candidates: review.blindToModelCandidates,
       sheets: sheets.map(({ source_id, name, county, year, sha256 }) => ({
         source_id,
         name,
@@ -305,6 +308,19 @@ export default function AnnotationDesk() {
             }
             placeholder="Required before export"
           />
+        </label>
+        <label className="reviewer-field">
+          <input
+            type="checkbox"
+            checked={review.blindToModelCandidates}
+            onChange={(event) =>
+              setReview((previous) => ({
+                ...previous,
+                blindToModelCandidates: event.target.checked,
+              }))
+            }
+          />
+          Map inventory was reviewed without viewing detector candidates
         </label>
         <button
           className="inline-link"

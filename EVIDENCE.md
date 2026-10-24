@@ -53,4 +53,4 @@ The resulting private dataset snapshot is `712b67e8b9a3fee1`: 909 candidate crop
 
 ## Next measurement
 
-Obtain independent human adjudication of the provisional candidate labels and spatial sample, then perform a complete symbol/lookalike inventory by sheet with a reproducible collar mask. Only then set inventory rows to `reviewed` in the survey CSV, report density by sheet/region/era, estimate model performance on an appropriate held-out set, and choose whether to continue.
+The project owner reports completing the full-map tile annotation and the 874-candidate blind review in the local browser desk. Their exports have not yet been imported into this workspace, so coverage, counts, label balance, and uncertainty are not verified here. The repo's current candidate-review queue is still marked 594/594 pending; that stale file does not disprove browser-local work. Next: import both private exports, validate all tile/candidate hashes and coverage, rebuild the private dataset, then train fit-only and evaluate the frozen detector only if a county-held-out, candidate-blind map inventory is available.

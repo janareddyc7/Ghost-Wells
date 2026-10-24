@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "split_level": "county",
+  "training_source_ids": [],
+  "evaluation_source_ids": [],
+  "frozen_before_metrics": false,
+  "review_inventory_blind_to_model_candidates": false,
+  "note": "Fill every source_id from evidence/pilot_sheets.json exactly once. Keep county groups disjoint. Set both attestations true only if accurate; the evaluation runner rejects this untouched template."
+}

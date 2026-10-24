@@ -112,6 +112,10 @@ Final deterministic snapshot: dataset ID `712b67e8b9a3fee1`, with repeat output 
 
 ## Entry template
 
+## 2026-10-24 — Training and evaluation runners prepared
+
+Owner reports completing the 874-candidate review and the full-map tile annotation in the browser. Neither export is present in the workspace, so no re-import, manifest rebuild, model fit, or detector metric was run; existing private dataset v4 remains unchanged and not training-ready. Added a fail-closed exploratory candidate-patch trainer that accepts only hash-verified independently reviewed training rows, trains on training counties only, and emits no evaluation/deployment claims. Added a held-out detector evaluator requiring complete reviewed-tile coverage, positive/negative inventory, uncertainty resolution, county-disjoint frozen split, matching source hashes, and truthful blind-inventory attestation. Evaluation reports one-to-one matches and FP/FN breakdowns at map-scale distance tolerances; these are not georeferenced ground-distance validation. App annotation export now records the blindness attestation. Tests cover split leakage, crop integrity, successful scoring, and incomplete-coverage rejection. Next: place the two browser exports in private `data/usgs/`, validate/import, rebuild the manifest, then run only gates supported by the actual labels and annotations.
+
 Date/time:
 
 Operator:

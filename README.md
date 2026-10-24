@@ -4,7 +4,7 @@ Ghost Wells investigates whether historical Ohio topographic maps can reveal oil
 
 ## Current state
 
-This repository is an initial, runnable foundation. [Targeted visual inspection](EVIDENCE.md) of six official Ohio historical map editions found labeled well symbols on five sheets. Full-sheet symbol counts, automated Ohio detections, ODNR matches, model accuracy, and agency partnership have not been validated here. The active research gate is a systematic Ohio symbol survey in [PLAN.md](PLAN.md). The interface's map artwork is illustrative.
+This repository is an initial, runnable foundation. [Targeted visual inspection](EVIDENCE.md) of six official Ohio historical map editions found labeled well symbols on five sheets. The project owner reports completing the full-map tile annotation in the local browser desk, but its JSON export is not currently in this workspace, so map coverage and counts have not yet been independently checked here. Ohio detector metrics, ODNR matches, and agency partnership are not validated. The interface's map artwork is illustrative.
 
 ## Run the interface
 
@@ -86,13 +86,32 @@ python -m ghostwells.apply_review_codes --manifest evidence/pilot_sheets.json --
 
 Then build the private crop export using the AI overlay as `--decisions`. The builder writes `provisional_training_candidates.csv` for weak-label experiments only; its rows prohibit evaluation use, group by source sheet for any later split, and remain ineligible until independent human adjudication. Do not use candidate-only chips as validation data. Any future evaluation must hold out entire sheets/counties.
 
-After a separate reviewer completes the blind desk and exports `ghost-wells-independent-review.json`, validate and merge that review without discarding the AI history:
+After you complete the blind candidate review and export `ghost-wells-independent-review.json`, validate and merge it without discarding the AI history. The owner reports completing this review, but the export is not yet present in this workspace; no labels or counts are treated as imported until the file passes validation:
 
 ```bash
 python -m ghostwells.apply_independent_review --ai-decisions data/usgs/candidate_review_decisions_ai_v3.json --queue data/usgs/candidate-review-all-v4/review_queue.csv --batch-manifest data/usgs/candidate-review-all-v4/batch_manifest.json --review data/usgs/ghost-wells-independent-review.json --output data/usgs/candidate_review_decisions_independent_v1.json
 ```
 
 Use that merged overlay as `--decisions` when rebuilding the private crop dataset. Only a complete blind review with both clear classes produces `exploratory_fit_ready`; `independent_training_examples.csv` is for fitting a binary candidate-patch classifier only. It is not a new U-Net detector, evaluation set, recall estimate, or verification of physical wells. No split or evaluation metrics are generated automatically.
+
+### Fit-only classifier and held-out detector evaluation
+
+Install `requirements-training.txt` only after the private blind-review JSON has been imported and the dataset manifest reports `exploratory_fit_ready`. Prepare a county-disjoint split plan from [the template](examples/evaluation_split_plan.template.json), assigning every sheet exactly once. Freeze the split before viewing metrics. The plan’s blindness flag must be true only if the full-map annotation was completed without seeing the detector candidate layer.
+
+Rebuild the dataset with the imported review, then fit a small candidate-patch classifier on training-counties only. The trainer verifies the manifest and every crop hash; it records only in-sample training history and creates no validation metrics:
+
+```bash
+python -m ghostwells.build_dataset --manifest evidence/pilot_sheets.json --candidates data/usgs/review_candidates_300dpi.json --decisions data/usgs/candidate_review_decisions_independent_v1.json --negative-queue data/usgs/negative-review-v1/negative_review_queue.csv --negative-decisions data/usgs/negative_review_decisions.json --data-dir data/usgs --output-dir data/usgs/dataset-training-prep-reviewed-v1
+python -m ghostwells.train_patch_classifier --dataset-dir data/usgs/dataset-training-prep-reviewed-v1 --split-plan data/usgs/evaluation_split_plan.json --source-manifest evidence/pilot_sheets.json --output-dir data/usgs/training-runs/candidate-patch-v1
+```
+
+To measure the frozen published detector, export the full map-tile annotations from the browser desk. The evaluator requires complete reviewed-tile coverage for held-out sheets, no unresolved uncertain marks there, source-hash agreement, a county-disjoint frozen split, and a blind-inventory attestation. It reports one-to-one precision/recall/F1 at 50/100/200 m-equivalent distances using printed map scale; these are not georeferencing-validated ground distances. The report contains private source provenance and must stay under ignored `data/usgs/`:
+
+```bash
+python -m ghostwells.evaluate_detector --annotations data/usgs/ghost-wells-review-annotations.json --tile-manifest data/usgs/tiles/tile_manifest.json --candidates data/usgs/review_candidates_300dpi.json --source-manifest evidence/pilot_sheets.json --split-plan data/usgs/evaluation_split_plan.json --output data/usgs/evaluation/detector-heldout-v1.json
+```
+
+The current checked-in tile queue still says `pending_human_review` because the browser’s completed review is not imported into the project files yet. Re-export the browser-local annotation state if needed; do not interpret the current 594 pending tile records as evidence that no review was performed.
 
 The CSV schema is documented in `examples/sheets.csv`. `review_status=reviewed` is required before counts are considered evidence. Rows marked `pending` are excluded from confirmed symbol counts. Download the six scans from the official URLs in `evidence/pilot_sheets.json` before running `verify`; raw files stay ignored by Git. Do not put precise candidate coordinates in public files.
 

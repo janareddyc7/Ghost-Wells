@@ -28,11 +28,11 @@ Build a reproducible workflow that reads historical Ohio map evidence, compares 
 - [ ] Add negative-control sheets from lower drilling regions.
 - [x] Save source URL, USGS identifier, catalog year, scale, download date, rights, and file hash for each pilot scan.
 - [x] Inspect selected interior areas and collars; document labeled positive examples on five sheets and a collar note on Macksburg.
-- [ ] Complete full-interior and collar inspection, count symbols and confusing lookalikes, and retain private review crops.
+- [x] Project owner reports completing full-map tile annotation; import the browser export and verify coverage/counts before treating it as evidence.
 - [ ] Have a second reviewer check a sample. Log disagreements.
 - [x] Seed the real pilot inventory with all six editions marked pending; the survey command reports zero completed counts.
 - [x] Add local PDF tiling and a browser annotation desk for well symbols, common lookalikes, uncertainty, undo, and reviewed-tile tracking.
-- [ ] Annotate every map tile; inspect and resolve duplicate marks at chip overlaps.
+- [x] Annotate every map tile in the local browser desk (owner-reported); export/import and verify reviewed-tile coverage and overlap deduplication.
 - [x] Integrate the published DOE/NETL U-Net as a reproducible, pixel-only candidate generator; keep all outputs unreviewed.
 - [ ] Review the candidate layer and matched negative examples on Ohio sheets; measure precision/recall before promoting any model output to annotation.
 - [ ] Run `ghostwells survey` on the fully reviewed inventory and publish aggregate counts only.
@@ -58,7 +58,12 @@ Build a reproducible workflow that reads historical Ohio map evidence, compares 
 - [x] Generate and visually screen a deterministic 4×4 spatial sample per sheet, 96 chips total; retain seven ambiguous crops as uncertain and do not mark any sample training-eligible.
 - [x] Export a combined private pilot with 909 candidate audit rows/crops, 96 spatial-review crops, 732 provisional exploratory-training candidates, pinned renderer versions, and an explicit zero-training-eligible gate.
 - [x] Screen all 874 previously pending candidate crops once in 57 map-specific contact sheets; record 573 provisional symbol candidates, 159 provisional lookalikes, and 142 uncertain cases with crop/batch provenance.
-- [ ] Obtain independent human adjudication of the AI screen and spatial sample; resolve disagreements before any accuracy estimate or training promotion.
+- [x] Complete the 874-candidate human review (owner-reported; export/import validation pending).
+- [ ] Review the 96-chip spatial sample and resolve uncertain marks before treating it as a map-wide inventory.
+- [ ] Import both review exports, validate exact coverage and label counts, preserve AI labels as history, and rebuild the private dataset manifest.
+- [ ] Confirm map-wide positive/negative annotation coverage, resolve tile overlaps, and freeze county/sheet holdouts before metrics.
+- [ ] Fit the candidate-patch classifier only if reviewed training labels support both classes; exploratory fit only, with evaluation/deployment claims disabled.
+- [ ] Measure the frozen detector only on complete, independently reviewed, held-out map tiles; publish error breakdowns with the private report.
 - [ ] Record pixel center, map transform, CRS, confidence, model version, crop, and source sheet for each detection.
 - [ ] Assess map positioning error on known surveyed wells before choosing any public accuracy claim.
 - [ ] Merge duplicate chips; then test edition fusion at 15 m and ODNR matching at 50, 100, and 200 m.
