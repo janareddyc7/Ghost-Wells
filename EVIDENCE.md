@@ -39,6 +39,10 @@ At the default 180-dpi-equivalent render, the model emitted 29 components across
 
 These 909 are **unreviewed model candidates, not annotations or well counts**. The very high Lodi count and visible false positives show that the model cannot be assumed to transfer accurately to these Ohio sheets. No complete visual review, Ohio precision/recall estimate, collar mask, independent review, or geographic transform has been produced. Do not publish or treat these points as confirmed wells. Next: mask the map neatlines, review candidate crops and matched negatives, then quantify the model's Ohio error before deciding whether it can accelerate annotation.
 
+### Conservative page-edge triage — 2026-10-23
+
+A first broad page-edge screen was superseded on 2026-10-24 by manually traced per-sheet rectangular map frames in `evidence/map_frame_bounds.json`, with a 0.5%-of-page boundary buffer. All 15 edge/exterior crops were inspected: five clear collar/page-furniture false positives were rejected; ten boundary-near candidates remain uncertain. All 14 Lowell and 7 Medina candidates were also inspected once: three aligned open-circle symbols, four clear lookalikes, and 13 uncertain cases. This is a single-reviewer candidate-only sample—not a precision estimate or complete map inventory. The private decision sidecar and queue remain under ignored `data/usgs/`; the resulting 909 statuses are 3 confirmed symbols, 4 rejected lookalikes, 5 rejected collar/page-furniture, 23 uncertain, and 874 pending. The labeled Findlay crop verifies annotation context, not a candidate identity. See [RUN_LOG.md](RUN_LOG.md) for limitations and next steps.
+
 The [USGS copyright guidance](https://www.usgs.gov/faqs/are-usgs-topographic-maps-copyrighted) says historical USGS topographic maps are public domain and asks for USGS credit. Public redistribution of source crops still needs the project's privacy review because a lead could reveal an exact location.
 
 ## Next measurement

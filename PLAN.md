@@ -51,6 +51,10 @@ Build a reproducible workflow that reads historical Ohio map evidence, compares 
 
 - [ ] Confirm model weights, license, and reproducible inference path from Ciulla et al. before using published metrics as project metrics.
 - [ ] Label Ohio symbols and hard negatives; split validation by county and sheet, not random chips.
+- [x] Generate a reproducible private review queue with conservative page-edge triage; all 909 detections remain pending because no exact collar exclusion was justified.
+- [x] Trace conservative rectangular map-frame bounds for all six pilot sheets, with an explicit boundary buffer; exact edge geometry remains a refinement.
+- [x] Review all collar/exterior and frame-edge candidate crops once; reject only five clear page-furniture hits and leave boundary-near cases uncertain.
+- [ ] Continue candidate review sheet-by-sheet, add matched model-negative samples, and obtain independent review before reporting accuracy.
 - [ ] Record pixel center, map transform, CRS, confidence, model version, crop, and source sheet for each detection.
 - [ ] Assess map positioning error on known surveyed wells before choosing any public accuracy claim.
 - [ ] Merge duplicate chips; then test edition fusion at 15 m and ODNR matching at 50, 100, and 200 m.

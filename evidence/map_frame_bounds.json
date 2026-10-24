@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "coordinate_space": "normalized rendered-page pixels; origin at top left",
+  "method": "Manually traced rectangular map neatline from the hash-verified source-sheet overview render. Bounds are screening geometry only, not georeferencing.",
+  "boundary_buffer_fraction": 0.005,
+  "sheets": {
+    "5a8a257be4b00f54eb3c0935": {
+      "name": "Macksburg",
+      "overview": "data/usgs/full_pages/Macksburg_overview.jpg",
+      "bounds": { "left": 0.0868, "top": 0.0520, "right": 0.8820, "bottom": 0.8940 }
+    },
+    "5a8a2576e4b00f54eb3c08b7": {
+      "name": "Lowell",
+      "overview": "data/usgs/full_pages/Lowell_overview.jpg",
+      "bounds": { "left": 0.0993, "top": 0.0515, "right": 0.8960, "bottom": 0.9010 }
+    },
+    "5a8a2476e4b00f54eb3bf1b5": {
+      "name": "Findlay",
+      "overview": "data/usgs/full_pages/Findlay_overview.jpg",
+      "bounds": { "left": 0.1050, "top": 0.0520, "right": 0.8860, "bottom": 0.8950 }
+    },
+    "5a8a2621e4b00f54eb3c192c": {
+      "name": "North Baltimore",
+      "overview": "data/usgs/full_pages/North Baltimore_overview.jpg",
+      "bounds": { "left": 0.0925, "top": 0.0470, "right": 0.8710, "bottom": 0.8900 }
+    },
+    "5a8a25afe4b00f54eb3c0e9d": {
+      "name": "Medina",
+      "overview": "data/usgs/full_pages/Medina_overview.jpg",
+      "bounds": { "left": 0.1026, "top": 0.0510, "right": 0.8860, "bottom": 0.8970 }
+    },
+    "5a8a2561e4b00f54eb3c0722": {
+      "name": "Lodi",
+      "overview": "data/usgs/full_pages/Lodi_overview.jpg",
+      "bounds": { "left": 0.1007, "top": 0.0497, "right": 0.8813, "bottom": 0.8950 }
+    }
+  }
+}

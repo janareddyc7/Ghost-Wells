@@ -40,6 +40,32 @@ Outputs (ignored/private): `data/usgs/review_candidates.json`, `data/usgs/review
 
 Next action: establish map-neatline masks, screen candidate and negative crops, calculate Ohio precision/recall against visual review, and only then decide whether model output can safely prioritize full annotation.
 
+## 2026-10-23 — Conservative page-edge screen
+
+Operator: Codex; source-page overview inspection and one labeled Findlay detail crop. This is a triage pass, not complete visual review.
+
+Input: `data/usgs/review_candidates_300dpi.json` (ignored/private); 909 components across six sheets. Added `ghostwells/candidate_review.py`, which emits a deterministic CSV queue with stable per-sheet candidate IDs, rendered-page coordinates, normalized coordinates, model component area, a conservative page-frame zone, and a pending review status.
+
+Screen: Broad normalized page envelope (x 0.06–0.94, y 0.03–0.94), with a 0.015 normalized boundary buffer. Result: 908 map-interior/manual-review, 1 frame-edge/manual-review, 0 outside-frame/exclude. All 909 remain pending; no candidate has been accepted or rejected as a well. The envelope is deliberately broad and is not an exact map neatline, so this run does not substantiate collar removal. The one Findlay detail crop confirms the printed “Oil Well” label context but does not by itself validate model detections.
+
+Output: `data/usgs/candidate_review_queue.csv` (ignored/private; precise page-pixel leads are not committed). The broad-envelope result above was an initial screen and was superseded on 2026-10-24 by per-sheet frame tracing below.
+
+Next: trace exact per-sheet neatlines from source pages, then visually review candidate crops and matched negatives. Keep all candidate statuses pending until source-map evidence is inspected; measure Ohio precision/recall before using the layer to prioritize annotation.
+
+## 2026-10-24 — Per-sheet frame tracing and first candidate review
+
+Operator: Codex, single visual reviewer. Candidate crop decisions are preliminary and not independently checked.
+
+Inputs: same six hash-verified GeoPDFs and 909-component 300-dpi candidate set. Each page's map-frame rectangle was manually traced from its rendered source overview and recorded in `evidence/map_frame_bounds.json`, with a 0.5%-of-page uncertainty buffer. This is a coarse rectangular screen; irregular/rotated neatlines and close edge symbols need human context. It is not a georeference.
+
+Frame triage: 894 candidates fall in the rectangular interior, 10 in the boundary buffer, and 5 outside. Crops of all 15 boundary/exterior cases were inspected. The five exterior cases are clear collar/coordinate/page-furniture false positives and were rejected as well-symbol detections. All 10 frame-edge candidates remain uncertain for full-sheet or second-review context.
+
+First interior-sheet review: inspected all 14 Lowell and all 7 Medina candidate crops against the original maps. Recorded 3 visually aligned open-circle symbols, 4 clear non-well lookalikes, and 13 crop-level uncertainties across these two sheets. No independent review and no matched-negative sample were performed; these labels are not a precision estimate. The Findlay “Oil Well” crop remains a contextual positive example, not a candidate label.
+
+Private decision overlay: `data/usgs/candidate_review_decisions.json`; regenerated queue: `data/usgs/candidate_review_queue.csv`. Current totals across 909: 3 `confirmed_symbol`, 4 `rejected_lookalike`, 5 `rejected_collar_or_page_furniture`, 23 `uncertain`, and 874 `pending`. Both precise files are ignored and must remain private. Reproduce with `python -m ghostwells.candidate_review data/usgs/review_candidates_300dpi.json data/usgs/candidate_review_queue.csv --decisions data/usgs/candidate_review_decisions.json`.
+
+Next: obtain a second reviewer on the 15 boundary cases and the 21 Lowell/Medina candidates, then continue sheet-by-sheet crop review with a matched sample of model-negative areas. Do not compute model metrics from these selected candidate-only crops.
+
 ## Entry template
 
 Date/time:
