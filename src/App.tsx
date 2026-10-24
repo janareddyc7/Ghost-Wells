@@ -23,6 +23,7 @@ import {
   X,
 } from 'lucide-react'
 import pilot from '../evidence/pilot_sheets.json'
+import AnnotationDesk from './components/AnnotationDesk'
 
 type View = 'overview' | 'survey' | 'pipeline' | 'about'
 type SheetStatus = 'Example seen' | 'Collar note'
@@ -515,6 +516,7 @@ function App() {
                   </a>
                 </div>
               </div>
+              <AnnotationDesk />
             </section>
           )}
 

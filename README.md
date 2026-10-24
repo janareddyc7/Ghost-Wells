@@ -27,6 +27,25 @@ python -m ghostwells verify --manifest evidence/pilot_sheets.json --data-dir dat
 python -m unittest discover -s tests
 ```
 
+To prepare private image chips for point-by-point annotation, install the optional research dependency and generate overlapping tiles:
+
+```bash
+pip install -r requirements-research.txt
+python -m ghostwells tiles --manifest evidence/pilot_sheets.json --data-dir data/usgs --output-dir data/usgs/tiles
+```
+
+Then open Sheet Survey in the app, load the `data/usgs/tiles` folder in the local annotation desk, and export reviewer annotations. The app stores progress in browser-local storage. Exports include pixel coordinates only; keep them private and do not commit them.
+
+### Published U-Net candidate pass
+
+The original research team released a pretrained U-Net and inference notebook through [DOE/NETL EDX (DOI 10.18141/2452768)](https://edx.netl.doe.gov/dataset/u-net-based-usgs-quadrangles-oil-and-gas-well-symbols-identification). The model file is 294 MB, licensed CC BY on the catalog, and is intentionally not committed. Download `unet_model.h5` from that catalog into `data/research_model/`, then verify its MD5 is `44932be2a2fa9690bf3b5572747a158e`. Install `requirements-inference.txt` and run:
+
+```bash
+python -m ghostwells candidates --manifest evidence/pilot_sheets.json --data-dir data/usgs --model data/research_model/unet_model.h5 --output data/usgs/review_candidates.json
+```
+
+This uses a 300-dpi-equivalent render and reproduces the published 256-pixel patches, 25-pixel overlap, ResNet preprocessing, 0.5 probability threshold, and 45-pixel component-area floor. The JSON contains pixel-space model candidates only. On the six current Ohio sheets, the run produced 909 raw components, including 627 on Lodi; this is a warning that Ohio transfer and false-positive behavior need review, not a well count. The model was not validated on these Ohio editions, so candidate output is not a complete annotation, a confirmed well, or a geospatial location. Review candidates and matched negatives before reporting counts.
+
 The CSV schema is documented in `examples/sheets.csv`. `review_status=reviewed` is required before counts are considered evidence. Rows marked `pending` are excluded from confirmed symbol counts. Download the six scans from the official URLs in `evidence/pilot_sheets.json` before running `verify`; raw files stay ignored by Git. Do not put precise candidate coordinates in public files.
 
 ## Structure

@@ -31,6 +31,10 @@ Build a reproducible workflow that reads historical Ohio map evidence, compares 
 - [ ] Complete full-interior and collar inspection, count symbols and confusing lookalikes, and retain private review crops.
 - [ ] Have a second reviewer check a sample. Log disagreements.
 - [x] Seed the real pilot inventory with all six editions marked pending; the survey command reports zero completed counts.
+- [x] Add local PDF tiling and a browser annotation desk for well symbols, common lookalikes, uncertainty, undo, and reviewed-tile tracking.
+- [ ] Annotate every map tile; inspect and resolve duplicate marks at chip overlaps.
+- [x] Integrate the published DOE/NETL U-Net as a reproducible, pixel-only candidate generator; keep all outputs unreviewed.
+- [ ] Review the candidate layer and matched negative examples on Ohio sheets; measure precision/recall before promoting any model output to annotation.
 - [ ] Run `ghostwells survey` on the fully reviewed inventory and publish aggregate counts only.
 - [x] Decide to **continue Stage 0**: labeled symbols exist on five sampled sheets across multiple regions. This is a narrow feasibility result, not a decision to launch the full detection product.
 - [ ] Make a documented **continue / pivot / stop** decision for model work after full counts and a second review. Continue if density and reproducibility justify a pilot. Pivot to another historical source if symbols are sparse. Stop map detection if neither source produces reliable, permitted evidence.
@@ -76,12 +80,13 @@ Build a reproducible workflow that reads historical Ohio map evidence, compares 
 
 ## Decision log
 
-| Date       | Decision                          | Reason                                                                                       | Revisit                                                                            |
-| ---------- | --------------------------------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| 2026-10-23 | Start with files, not a database  | Survey and pilot are single team batch workflows; fewer moving parts                         | Add a database when concurrent review, access controls, or query volume require it |
-| 2026-10-23 | Show sample data explicitly in UI | No Ohio detection has been validated in this repository                                      | Replace with versioned, reviewed exports after M0–M3                               |
-| 2026-10-23 | Gate full build on Ohio symbols   | A core source assumption is unresolved                                                       | After reviewed M0 evidence                                                         |
-| 2026-10-23 | Continue the Stage 0 survey       | Five named Ohio sheets contain labeled well symbols; density and lead quality remain unknown | After full counts and independent review                                           |
+| Date       | Decision                                | Reason                                                                                        | Revisit                                                                            |
+| ---------- | --------------------------------------- | --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| 2026-10-23 | Start with files, not a database        | Survey and pilot are single team batch workflows; fewer moving parts                          | Add a database when concurrent review, access controls, or query volume require it |
+| 2026-10-23 | Show sample data explicitly in UI       | No Ohio detection has been validated in this repository                                       | Replace with versioned, reviewed exports after M0–M3                               |
+| 2026-10-23 | Gate full build on Ohio symbols         | A core source assumption is unresolved                                                        | After reviewed M0 evidence                                                         |
+| 2026-10-23 | Continue the Stage 0 survey             | Five named Ohio sheets contain labeled well symbols; density and lead quality remain unknown  | After full counts and independent review                                           |
+| 2026-10-23 | Use the published U-Net only for triage | 300-dpi run produced 909 components with a very high Lodi count; Ohio transfer is unvalidated | After visual candidate and negative review                                         |
 
 ## Run log template
 

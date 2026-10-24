@@ -8,6 +8,7 @@ __pycache__/
 .venv/
 data/
 reports/
+ghost-wells-review-annotations*.json
 *.tif
 *.tiff
 *.gpkg

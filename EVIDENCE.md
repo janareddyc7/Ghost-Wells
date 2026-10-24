@@ -25,6 +25,19 @@ This is a targeted visual check, not a systematic count. No second reviewer has 
 1. Download the six official GeoPDF URLs in `evidence/pilot_sheets.json` into `data/usgs/` using the listed `local_file` names. The repository does not commit those large source scans.
 2. Run `python -m ghostwells verify --manifest evidence/pilot_sheets.json --data-dir data/usgs` to check SHA-256 hashes.
 3. Inspect the map interiors and collars at full resolution. The observation table above gives a fast starting point. Do not treat the listed labels as a complete inventory.
+4. Install the research dependency and generate local review chips as described in `README.md`. The annotation desk records labels in rendered-page pixels and stores progress in the browser; its export is not a geospatial well layer.
+
+## Tiling run — 2026-10-23
+
+All six source PDFs passed the manifest hash check. The local tiler rendered 594 overlapping JPEG chips at 2.5 pixels per PDF point, 512-pixel chip size, and 64-pixel overlap (about 46.6 MB). The tile manifest is under ignored `data/usgs/tiles/`. One chip was visually inspected to confirm that the image and page-pixel origin align. The generated `review_queue.json` explicitly lists all 594 chips as pending. No symbol inventory or count has yet been completed; the chips still require human review and overlap deduplication. The annotation desk saves to browser-local storage and exports pixel positions, not geographic coordinates. Independent review remains outstanding.
+
+## Published-model candidate pass — 2026-10-23
+
+Downloaded the authors' U-Net from the [DOE/NETL EDX package](https://edx.netl.doe.gov/dataset/u-net-based-usgs-quadrangles-oil-and-gas-well-symbols-identification), DOI `10.18141/2452768`, into ignored `data/research_model/`. The catalog MD5 matched `44932be2a2fa9690bf3b5572747a158e`. The weights loaded in TensorFlow 2.15. The local runner follows the notebook's 256-pixel patches, 25-pixel overlap, ResNet preprocessing, 0.5 threshold, 4-connected components, and 45-pixel minimum area.
+
+At the default 180-dpi-equivalent render, the model emitted 29 components across six maps. A crop review found many were contours, text, and collar artifacts; this scale was rejected. At 300-dpi-equivalent render, it emitted 909 raw components: Macksburg 150, Lowell 14, Findlay 52, North Baltimore 59, Medina 7, Lodi 627. Outputs are in ignored `data/usgs/review_candidates_300dpi.json`. Full-sheet overlays and the Findlay crop sheet are in ignored `data/usgs/full_pages/`.
+
+These 909 are **unreviewed model candidates, not annotations or well counts**. The very high Lodi count and visible false positives show that the model cannot be assumed to transfer accurately to these Ohio sheets. No complete visual review, Ohio precision/recall estimate, collar mask, independent review, or geographic transform has been produced. Do not publish or treat these points as confirmed wells. Next: mask the map neatlines, review candidate crops and matched negatives, then quantify the model's Ohio error before deciding whether it can accelerate annotation.
 
 The [USGS copyright guidance](https://www.usgs.gov/faqs/are-usgs-topographic-maps-copyrighted) says historical USGS topographic maps are public domain and asks for USGS credit. Public redistribution of source crops still needs the project's privacy review because a lead could reveal an exact location.
 

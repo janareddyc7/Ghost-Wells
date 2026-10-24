@@ -10,6 +10,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from ghostwells.evidence import verify_files
+from ghostwells.model_candidates import detect_candidates
+from ghostwells.tiling import create_tiles
 
 REQUIRED_COLUMNS = {
     "sheet_id", "quadrangle", "county", "edition_year", "source_url",
@@ -87,6 +89,25 @@ def main() -> None:
     verify = subcommands.add_parser("verify", help="Check downloaded USGS scans against a manifest")
     verify.add_argument("--manifest", type=Path, required=True)
     verify.add_argument("--data-dir", type=Path, required=True)
+    tiles = subcommands.add_parser("tiles", help="Render local PDFs into overlapping review chips")
+    tiles.add_argument("--manifest", type=Path, required=True)
+    tiles.add_argument("--data-dir", type=Path, required=True)
+    tiles.add_argument("--output-dir", type=Path, required=True)
+    tiles.add_argument("--scale", type=float, default=2.5)
+    tiles.add_argument("--tile-size", type=int, default=512)
+    tiles.add_argument("--overlap", type=int, default=64)
+    candidates = subcommands.add_parser(
+        "candidates", help="Generate unreviewed well-symbol candidates with the published U-Net"
+    )
+    candidates.add_argument("--manifest", type=Path, required=True)
+    candidates.add_argument("--data-dir", type=Path, required=True)
+    candidates.add_argument("--model", type=Path, required=True)
+    candidates.add_argument("--output", type=Path, required=True)
+    candidates.add_argument("--scale", type=float, default=4.1666667)
+    candidates.add_argument("--threshold", type=float, default=0.5)
+    candidates.add_argument("--min-area", type=int, default=45)
+    candidates.add_argument("--batch-size", type=int, default=8)
+    candidates.add_argument("--sheet-id", action="append", default=[])
     args = parser.parse_args()
 
     if args.command == "survey":
@@ -105,6 +126,37 @@ def main() -> None:
         if errors:
             parser.exit(1, "\n".join(errors) + "\n")
         print("All source scans match the evidence manifest")
+    elif args.command == "tiles":
+        try:
+            result = create_tiles(
+                args.manifest,
+                args.data_dir,
+                args.output_dir,
+                scale=args.scale,
+                tile_size=args.tile_size,
+                overlap=args.overlap,
+            )
+        except (OSError, ValueError, RuntimeError) as error:
+            parser.error(str(error))
+        print(f"Wrote review chips and manifest to {result}")
+    elif args.command == "candidates":
+        try:
+            result = detect_candidates(
+                args.manifest,
+                args.data_dir,
+                args.model,
+                args.output,
+                scale=args.scale,
+                threshold=args.threshold,
+                min_area=args.min_area,
+                batch_size=args.batch_size,
+                sheet_ids=set(args.sheet_id) if args.sheet_id else None,
+            )
+        except (OSError, ValueError, RuntimeError, KeyError) as error:
+            parser.error(str(error))
+        for sheet in result["sheets"]:
+            print(f"{sheet['sheet']}: {len(sheet['candidates'])} unreviewed candidates")
+        print(f"Wrote candidate set to {args.output}")
 
 
 if __name__ == "__main__":
