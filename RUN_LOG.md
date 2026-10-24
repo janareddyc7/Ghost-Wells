@@ -66,6 +66,24 @@ Private decision overlay: `data/usgs/candidate_review_decisions.json`; regenerat
 
 Next: obtain a second reviewer on the 15 boundary cases and the 21 Lowell/Medina candidates, then continue sheet-by-sheet crop review with a matched sample of model-negative areas. Do not compute model metrics from these selected candidate-only crops.
 
+## 2026-10-24 — Provenance-checked crop pilot export
+
+Operator: Codex; local single-reviewer decisions only. No new labels were added during export.
+
+Added `ghostwells/build_dataset.py` and pinned the optional crop dependencies in `requirements-dataset.txt`. The builder verifies all six source PDF SHA-256 hashes and rendered dimensions before creating output, binds the dataset ID to source manifest, raw candidates, review decisions, map-frame bounds, model hash, render scale, and crop size, then regenerates 256×256 source-map crops for every reviewed candidate. It writes `candidate_audit.csv`, `reviewed_examples.csv`, crop PNGs with individual SHA-256 values, and `dataset_manifest.json`. Existing output directories are never overwritten.
+
+This initial candidate-only export was superseded by the combined pilot recorded below. Local output remains ignored/private.
+
+Verification: builder completed after correcting the raster dimension preflight to use the same ceil-to-pixel convention as inference; source hashes matched, the audit and crop counts matched review records, all 35 crops are 256×256, and the crop file paths exist. Builder code and dependency runtime versions are included in the dataset identity. A clean repeat produced the same dataset ID and output hashes. `npm run check` and all seven Python tests passed after formatting the frame configuration; source-manifest verification passed.
+
+## 2026-10-24 — Spatial negative-review pilot
+
+Added `ghostwells/sample_negatives.py`, which selects a deterministic jittered 4×4 grid sample on each of the six map interiors, only where the center clears all model candidate locations by at least 256 rendered pixels. The resulting 96 chips were inspected once at full crop resolution. In 89, no standalone open-circle well symbol was visually apparent; seven ambiguous crops were retained as uncertain with individual notes. This is a qualitative single-reviewer screen: samples are not confirmed negatives, do not establish model recall, and remain ineligible for training until independent review.
+
+Extended the dataset builder to validate the sample queue, map-frame provenance, candidate exclusion distance, crop dimensions, and crop hashes before creating the combined export. Dataset identity includes the negative queue, decision overlay, sampler manifest, source/manifests, builder implementation, model hash, and renderer runtime versions. Current local private output: `data/usgs/dataset-pilot-v7/`, dataset ID `6125081fb6f45212`; 909 candidate audit rows, 35 reviewed candidate crops, 96 spatial-review crops (131 crops total), all 256×256. The candidate statuses remain 3 confirmed symbols, 4 lookalikes, 5 collar/page-furniture exclusions, 23 uncertain, and 874 pending. A final label-eligibility audit now marks every crop ineligible for training until independent review; the manifest records zero training-eligible examples. No split is assigned and status remains **not training ready**. Private scans, queues, overlays, crops, and exports remain ignored by Git.
+
+Final verification: a second build reproduced the same dataset ID and all output hashes. All 131 images are 256×256; the manifest reports 0 training-eligible examples. `npm run check` passed (typecheck, lint, formatting, production build); all eight Python tests passed, including a synthetic end-to-end dataset build and a tampered-crop rejection test; all six source scans passed SHA-256 verification. CI now installs the pinned dataset-rendering dependencies before running those tests.
+
 ## Entry template
 
 Date/time:

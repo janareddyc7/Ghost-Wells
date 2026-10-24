@@ -24,6 +24,7 @@ Requires Python 3.10 or newer. The CLI accepts a manually reviewed CSV inventory
 ```bash
 python -m ghostwells survey --input evidence/survey_inventory.csv --output reports/survey.json
 python -m ghostwells verify --manifest evidence/pilot_sheets.json --data-dir data/usgs
+pip install -r requirements-dataset.txt
 python -m unittest discover -s tests
 ```
 
@@ -45,6 +46,33 @@ python -m ghostwells candidates --manifest evidence/pilot_sheets.json --data-dir
 ```
 
 This uses a 300-dpi-equivalent render and reproduces the published 256-pixel patches, 25-pixel overlap, ResNet preprocessing, 0.5 probability threshold, and 45-pixel component-area floor. The JSON contains pixel-space model candidates only. On the six current Ohio sheets, the run produced 909 raw components, including 627 on Lodi; this is a warning that Ohio transfer and false-positive behavior need review, not a well count. The model was not validated on these Ohio editions, so candidate output is not a complete annotation, a confirmed well, or a geospatial location. Review candidates and matched negatives before reporting counts.
+
+### Export the reviewed crop pilot
+
+The reviewed crop export is local and private. Install `requirements-dataset.txt`, ensure the ignored raw scans and candidate/decision JSON are present, and choose new output directories (the commands refuse to overwrite existing ones). First create a deterministic 4×4-per-sheet spatial sample, review every chip, and save the private decision overlay; then combine it with reviewed model hits:
+
+```bash
+pip install -r requirements-dataset.txt
+python -m ghostwells.sample_negatives --manifest evidence/pilot_sheets.json --candidates data/usgs/review_candidates_300dpi.json --data-dir data/usgs --output-dir data/usgs/negative-review-v1
+python -m ghostwells.build_dataset --manifest evidence/pilot_sheets.json --candidates data/usgs/review_candidates_300dpi.json --decisions data/usgs/candidate_review_decisions.json --negative-queue data/usgs/negative-review-v1/negative_review_queue.csv --negative-decisions data/usgs/negative_review_decisions.json --data-dir data/usgs --output-dir data/usgs/dataset-pilot-v7
+```
+
+The spatial sample command leaves all chips pending; review every chip and create `data/usgs/negative_review_decisions.json` before building the combined export. Copy `sample_set_id` from `sample_manifest.json`, set `all_queued_samples_reviewed` to `true` only after reviewing every queue row, provide a `default_note` for samples with no visible well symbol, and list each ambiguous sample ID with its own note in `uncertain`:
+
+```json
+{
+  "schema_version": 1,
+  "sample_set_id": "COPY_FROM_sample_manifest.json",
+  "all_queued_samples_reviewed": true,
+  "default_status": "no_well_symbol_visible",
+  "default_note": "Describe what was actually inspected.",
+  "uncertain": {
+    "sample_id_from_queue": "Explain why this crop is ambiguous."
+  }
+}
+```
+
+The export verifies source and crop hashes, regenerates reviewed candidate crops from the source PDFs, and records crop hashes and decision notes alongside the full candidate audit. The checked-in source code does not contain the private decision overlays or map chips; maintain those under ignored `data/usgs/`. The current local export has 35 reviewed model-hit crops and 96 sampled map-interior crops (89 with no well symbol visually apparent, 7 uncertain), all reviewed once. These are single-reviewer observations, not ground truth or a recall estimate. Every example is explicitly ineligible for training until independent review, and the dataset is `not_training_ready`. No random crop split is allowed; any future evaluation must hold out entire sheets/counties.
 
 The CSV schema is documented in `examples/sheets.csv`. `review_status=reviewed` is required before counts are considered evidence. Rows marked `pending` are excluded from confirmed symbol counts. Download the six scans from the official URLs in `evidence/pilot_sheets.json` before running `verify`; raw files stay ignored by Git. Do not put precise candidate coordinates in public files.
 

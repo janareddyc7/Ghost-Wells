@@ -1,6 +1,6 @@
 # Ghost Wells — project tracker
 
-Updated: 2026-10-23. Owner: project team. Status key: `TODO`, `IN PROGRESS`, `DONE`, `BLOCKED`.
+Updated: 2026-10-24. Owner: project team. Status key: `TODO`, `IN PROGRESS`, `DONE`, `BLOCKED`.
 
 ## North star and release rule
 
@@ -51,10 +51,13 @@ Build a reproducible workflow that reads historical Ohio map evidence, compares 
 
 - [ ] Confirm model weights, license, and reproducible inference path from Ciulla et al. before using published metrics as project metrics.
 - [ ] Label Ohio symbols and hard negatives; split validation by county and sheet, not random chips.
-- [x] Generate a reproducible private review queue with conservative page-edge triage; all 909 detections remain pending because no exact collar exclusion was justified.
+- [x] Generate a reproducible private review queue; 35/909 candidates now have crop-level decisions or uncertainty notes, with 874 still pending.
 - [x] Trace conservative rectangular map-frame bounds for all six pilot sheets, with an explicit boundary buffer; exact edge geometry remains a refinement.
 - [x] Review all collar/exterior and frame-edge candidate crops once; reject only five clear page-furniture hits and leave boundary-near cases uncertain.
-- [ ] Continue candidate review sheet-by-sheet, add matched model-negative samples, and obtain independent review before reporting accuracy.
+- [x] Build a provenance-checked private crop pilot with source/candidate/decision/frame hashes, one crop per reviewed hit, and an explicit no-training-ready gate.
+- [x] Generate and visually screen a deterministic 4×4 spatial sample per sheet, 96 chips total; retain seven ambiguous crops as uncertain and do not mark any sample training-eligible.
+- [x] Export a combined private pilot with 909 candidate audit rows, 35 reviewed-hit crops, 96 spatial-review crops, pinned renderer versions, and an explicit no-training-ready gate.
+- [ ] Continue candidate review sheet-by-sheet and obtain independent review of both hit and spatial samples before producing validation metrics.
 - [ ] Record pixel center, map transform, CRS, confidence, model version, crop, and source sheet for each detection.
 - [ ] Assess map positioning error on known surveyed wells before choosing any public accuracy claim.
 - [ ] Merge duplicate chips; then test edition fusion at 15 m and ODNR matching at 50, 100, and 200 m.
